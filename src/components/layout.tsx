@@ -29,7 +29,7 @@ const navLinkTextStyles = {
 
 export interface LayoutProps {
 	pageTitle?: string,
-	children?: JSX.Element
+	children?: JSX.Element[]
 }
 
 
