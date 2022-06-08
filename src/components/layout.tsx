@@ -27,9 +27,8 @@ const navLinkTextStyles = {
 }
 
 
-export interface LayoutProps {
+export interface LayoutProps extends React.PropsWithChildren {
 	pageTitle?: string,
-	children?: JSX.Element[]
 }
 
 
