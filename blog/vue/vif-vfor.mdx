@@ -1,0 +1,57 @@
+---
+title: "Hello World"
+date: "2022-07-01"
+---
+
+## v-if 和 v-for 哪个优先级更高？
+
+### **解析逻辑上：**
+在 `Vue2` 中，`v-for` 优先被解析；在 `Vue3` 中相反， `v-if` 优先被解析。
+
+对于渲染如下列表：
+```
+items: [
+    { id: 1, name: '张三', isActive: true },
+    { id: 2, name: '李四', isActive: false }
+]
+-----
+<div v-for="item in items" :key="item.id" v-if="item.isActive">{{ item.name }}</div>
+```
+
+在 `Vue2` 中，渲染函数中渲染列表部分如下(做了格式化处理)，可以看出判断逻辑是在渲染列表逻辑内部：
+
+```
+_l(
+    (items),
+    function(item){
+        return
+            (item.isActive)
+            ?_c('div',{key:item.id},[_v("\n      "+_s(item.name)+"\n    ")])
+            :_e()
+    }
+)
+```
+
+而在 `Vue3` 中，`shouldShowUsers` 对应的判断逻辑在 `_renderList` 之前。
+
+```
+return shouldShowUsers
+  ? (_openBlock(true), _createElementBlock(_Fragment, { key: 0 }, _renderList(items, (item) => {
+      return (_openBlock(), _createElementBlock("div", { key: item.id }, _toDisplayString(item.name), 1 /* TEXT */))
+    }), 128 /* KEYED_FRAGMENT */))
+  : _createCommentVNode("v-if", true)
+```
+
+### **使用逻辑及经验上：**
+官方文档中明确指出：**永远不要把 `v-if` 和 `v-for` 同时用在同一个元素上**。
+
+平时写代码的过程中通常在以下两种情况下，会更容易写出这样的代码：
+- **过滤列表中的项目** (列表判断逻辑不应该出现在渲染过程中，列表的筛选应该在 computed 或者 watch 中去完成。)
+    ```
+    <list-item v-for="item in list" v-if="item.shouldRender" />
+    ```
+- **判断是否渲染列表整体** (使用`<template>`包裹或者判断父级容器的整体状态。)
+    ```
+    <list-item v-for="item in list" v-if="showRenderAll" />
+    ```
+
