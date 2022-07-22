@@ -1,44 +1,23 @@
 import * as React from "react";
 import {Link, useStaticQuery, graphql} from "gatsby";
+import {css} from '@emotion/css'
 
-
-const containerStyles = {
-	margin: 'auto',
-	maxWidth: '500px',
-	fontFamily: 'sans-serif'
-}
-
-const headingStyles = {
-	color: 'rebeccapurple'
-}
-
-const navLinksStyles = {
-	display: 'flex',
-	listStyle: 'none',
-	paddingLeft: 0
-}
-
-const navLinkItemStyles = {
-	paddingLeft: '2rem',
-	color: 'black'
-}
-
-const navLinkTextStyles = {
-	color: 'black'
-}
-
-const siteTitle = {
-	fontSize: '3rem',
-	color: 'gray',
-	fontWeight: 700,
-	margin: '3rem 0'
-}
 
 
 export interface LayoutProps extends React.PropsWithChildren {
 	pageTitle?: string,
 }
 
+interface RouteMap {
+	name: string
+	route: string
+}
+
+const BaseRouteMaps: RouteMap[]= [
+	{ name: 'Home', route: '/' },
+	{ name: 'About', route: '/about' },
+	{ name: 'Blog', route: '/blog' }
+]
 
 const Layout = ({pageTitle, children}: LayoutProps) => {
 	const data = useStaticQuery(graphql`
@@ -52,24 +31,44 @@ const Layout = ({pageTitle, children}: LayoutProps) => {
 	`)
 
 	return (
-		<div style={containerStyles}>
+		<div className={css`
+			margin: auto;
+			max-width: 500px;
+			font-family: sans-serif;
+		`}>
 			<title>{pageTitle} | {data.site.siteMetadata.title}</title>
-			<header style={siteTitle}>{data.site.siteMetadata.title}</header>
+			<header className={css`
+				font-size: 3rem;
+				color: gray;
+				font-weight: 700;
+				margin: 3rem 0;
+			`}>{data.site.siteMetadata.title}</header>
 			<nav>
-				<ul style={navLinksStyles}>
-					<li style={navLinkItemStyles}>
-						<Link to="/" style={navLinkTextStyles}>Home</Link>
-					</li>
-					<li style={navLinkItemStyles}>
-						<Link to="/about" style={navLinkTextStyles}>About</Link>
-					</li>
-					<li style={navLinkItemStyles}>
-						<Link to="/blog" style={navLinkTextStyles}>Blog</Link>
-					</li>
+				<ul className={css`
+					display: flex;
+					list-style: none;
+					padding-left: 0;
+				`}>
+					{
+						BaseRouteMaps.map(routeMap => (
+							<li className={css`
+								padding-left: 2rem;
+								color: black;
+							`}>
+								<Link
+									to={routeMap.route}
+									className={css`
+										color: black;
+									`}>{routeMap.name}</Link>
+							</li>
+						))
+					}
 				</ul>
 			</nav>
 			<main>
-				<h1 style={headingStyles}>{pageTitle}</h1>
+				<h1 className={css`
+					color: rebeccapurple;
+				`}>{pageTitle}</h1>
 				{children}
 			</main>
 		</div>
