@@ -1,7 +1,6 @@
-import * as React from "react";
-import {Link, useStaticQuery, graphql} from "gatsby";
+import * as React from 'react';
+import {Link, useStaticQuery, graphql} from 'gatsby';
 import {css} from '@emotion/css'
-
 
 
 export interface LayoutProps extends React.PropsWithChildren {
@@ -13,10 +12,10 @@ interface RouteMap {
 	route: string
 }
 
-const BaseRouteMaps: RouteMap[]= [
-	{ name: 'Home', route: '/' },
-	{ name: 'About', route: '/about' },
-	{ name: 'Blog', route: '/blog' }
+const BaseRouteMaps: RouteMap[] = [
+	{name: 'Home', route: '/'},
+	{name: 'About', route: '/about'},
+	{name: 'Blog', route: '/blog'}
 ]
 
 const Layout = ({pageTitle, children}: LayoutProps) => {
@@ -34,7 +33,6 @@ const Layout = ({pageTitle, children}: LayoutProps) => {
 		<div className={css`
 			margin: auto;
 			max-width: 500px;
-			font-family: sans-serif;
 		`}>
 			<title>{pageTitle} | {data.site.siteMetadata.title}</title>
 			<header className={css`
@@ -51,7 +49,7 @@ const Layout = ({pageTitle, children}: LayoutProps) => {
 				`}>
 					{
 						BaseRouteMaps.map(routeMap => (
-							<li className={css`
+							<li key={routeMap.name} className={css`
 								padding-left: 2rem;
 								color: black;
 							`}>
