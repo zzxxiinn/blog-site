@@ -1,6 +1,13 @@
 name: Docker Image CI
 
+
+
 on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Test tag'
+
   push:
     branches: [ "main" ]
   pull_request:
