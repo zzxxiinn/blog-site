@@ -7,11 +7,10 @@ if [ -z $tag ]; then
 #  echo "please input the tag"
 #  exit 1
 fi
-
-gatsby clean
-gatsby build
-
 echo "build docker image with tag: fishpond:$tag"
+
+npx gatsby clean
+npx gatsby build
 
 docker build --network=host -t fishpond:$tag .
 docker tag fishpond:$tag zhangxin8344/fishpond:$tag
