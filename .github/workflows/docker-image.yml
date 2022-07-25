@@ -43,3 +43,16 @@ jobs:
 
     - name: Build the Docker image
       run: bash ./build_push.sh
+      
+    - name: Trigger Webhook
+      uses: joelwmale/webhook-action@2.1.0
+      with:
+        # The url to send the webhook event to
+        url: ${{ secrets.PORTAINER_CONTAINER_WEBHOOK }}
+        # Additional headers to send alongside the defaults
+        # headers: # optional
+        # The data sent to the webhook
+        # body: # optional
+        # Enables calling to known self-signed or invalid SSL certificates
+        # insecure: # optional
+
