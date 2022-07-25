@@ -3,18 +3,15 @@ name: Docker Image CI
 
 
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Test tag'
-
+  #   workflow_dispatch:
+  #     inputs:
+  #       tag:
+  #         description: 'Test tag'
   push:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
