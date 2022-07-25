@@ -39,7 +39,7 @@ jobs:
         # Username used to log against the Docker registry
         username: zhangxin8344/fishpond
         # Password or personal access token used to log against the Docker registry
-        password: 0def811e-f69c-42b2-95b9-b92be6dbb8ac
+        password: ${{ secrets.DOCKER_LOGIN_TOKEN }}
 
     - name: Build the Docker image
       run: bash ./build_push.sh
