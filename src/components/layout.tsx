@@ -42,10 +42,7 @@ const Layout = ({pageTitle, children}: LayoutProps) => {
 	`)
 
 	return (
-		<div className={css`
-			margin: auto;
-			max-width: 500px;
-		`}>
+		<div>
 			<title>{pageTitle} | {data.site.siteMetadata.title}</title>
 			<header className={css`
 				font-size: 3rem;

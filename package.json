@@ -21,6 +21,7 @@
     "@emotion/styled": "^11.9.3",
     "@mdx-js/mdx": "^1.6.22",
     "@mdx-js/react": "^1.6.22",
+    "css-doodle": "^0.29.0",
     "gatsby": "^4.15.2",
     "gatsby-plugin-emotion": "^7.19.0",
     "gatsby-plugin-image": "^2.15.1",
