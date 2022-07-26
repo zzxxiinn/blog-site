@@ -3,7 +3,8 @@ body {
   font-family: VonwaonBitmap, georgia, serif;
   font-weight: normal;
   word-wrap: break-word;
-  font-kerning: normal;
+  /*font-kerning: normal;*/
+  font-size: 12px;
 }
 
 code {

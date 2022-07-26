@@ -1,10 +1,10 @@
 import * as React from "react";
 import {graphql} from "gatsby";
 import {MDXRenderer} from "gatsby-plugin-mdx";
-import { GatsbyImage, getImage } from 'gatsby-plugin-image'
+import {MDXProvider} from "@mdx-js/react"
+import {GatsbyImage, getImage} from 'gatsby-plugin-image'
 
 import Layout from "../../components/layout";
-import {IGatsbyImageData} from "gatsby-plugin-image/dist/src/components/gatsby-image.browser";
 
 interface BlogPostProps {
 	data: {
@@ -22,11 +22,22 @@ interface BlogPostProps {
 	}
 }
 
+const MyH1: React.FC = props => <h1 style={{color: "tomato"}} {...props} />
+const MyParagraph: React.FC = props => (
+	<p style={{fontSize: "12px", lineHeight: 1.6}} {...props} />
+)
+
+const components = {
+	h1: MyH1,
+	p: MyParagraph,
+}
+
+
 const BlogPost = ({data}: BlogPostProps) => {
-	const image= getImage(data.mdx.frontmatter.hero_image)
+	const image = getImage(data.mdx.frontmatter.hero_image)
 
 	return (
-		<Layout pageTitle="Super Cool Blog Posts">
+		<Layout pageTitle={data.mdx.frontmatter.title}>
 			<p>Post: {data.mdx.frontmatter.date}</p>
 			{
 				(image !== undefined) && (
@@ -44,9 +55,11 @@ const BlogPost = ({data}: BlogPostProps) => {
 					</>
 				)
 			}
-			<MDXRenderer>
-				{data.mdx.body}
-			</MDXRenderer>
+			<MDXProvider components={components}>
+				<MDXRenderer>
+					{data.mdx.body}
+				</MDXRenderer>
+			</MDXProvider>
 		</Layout>
 	)
 }

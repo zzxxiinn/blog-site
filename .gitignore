@@ -5,4 +5,6 @@ src/gatsby-types.d.ts
 .idea/
 .vscode/
 *error.log
+
 *.lock
+*-lock.json
