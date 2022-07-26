@@ -42,10 +42,7 @@ const BlogPost = ({data}: BlogPostProps) => {
 			{
 				(image !== undefined) && (
 					<>
-						<GatsbyImage
-							image={image}
-							alt={data.mdx.frontmatter.hero_image_alt}
-						/>
+						<GatsbyImage image={image} alt={data.mdx.frontmatter.hero_image_alt} />
 						<p>
 							Photo Credit:{" "}
 							<a href={data.mdx.frontmatter.hero_image_credit_link}>
