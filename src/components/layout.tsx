@@ -13,7 +13,7 @@ interface RouteMap {
 const BaseRouteMaps: RouteMap[] = [
 	{name: 'Home', route: '/'},
 	{name: 'About', route: '/about'},
-	{name: 'Blog', route: '/Blog'},
+	{name: 'Blog', route: '/blog'},
 ]
 
 const renderNav = () => (
@@ -46,7 +46,7 @@ const Layout = ({pageTitle, children}: LayoutProps) => {
 			<title>{pageTitle} | {data.site.siteMetadata.title}</title>
 			<header>{data.site.siteMetadata.title}</header>
 
-			<main>
+			<main className="container">
 				{renderNav()}
 				<h1>{pageTitle}</h1>
 				{children}

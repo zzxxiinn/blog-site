@@ -1,12 +1,16 @@
+:root {
+  --global-font-size: 14px;
+  --font-stack: VonwaonBitmap, georgia, serif;
+}
+
 body {
   color: hsla(0, 0%, 0%, 0.8);
-  font-family: VonwaonBitmap, georgia, serif;
+  /* font-family: VonwaonBitmap, georgia, serif;
   font-weight: normal;
-  word-wrap: break-word;
-  /*font-kerning: normal;*/
-  font-size: 12px;
+  word-wrap: break-word; */
 }
 
 code {
   font-family: VonwaonBitmap, monospace;
 }
+
