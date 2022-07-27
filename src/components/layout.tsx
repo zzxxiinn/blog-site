@@ -33,11 +33,7 @@ const renderNav = () => (
 const Layout = ({pageTitle, children}: LayoutProps) => {
 	const data = useStaticQuery(graphql`
 		query {
-			site {
-				siteMetadata {
-					title
-				}
-			}
+			site { siteMetadata { title } }
 		}
 	`)
 

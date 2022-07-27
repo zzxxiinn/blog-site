@@ -5,12 +5,19 @@
 
 body {
   color: hsla(0, 0%, 0%, 0.8);
-  /* font-family: VonwaonBitmap, georgia, serif;
-  font-weight: normal;
-  word-wrap: break-word; */
+  width: 100vw;
+  height: 100vh;
+  background-color: #eee;
+  position: relative;
 }
 
 code {
   font-family: VonwaonBitmap, monospace;
+}
+
+.index-doodle-wraper {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
 }
 
