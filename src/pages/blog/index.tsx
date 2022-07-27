@@ -19,7 +19,7 @@ interface BlogProps {
 
 const BlogPage = ({data}: BlogProps) => {
 	return (
-		<Layout pageTitle="My Blog Posts">
+		<Layout pageTitle="这里是所有的内容">
 			{
 				data.allMdx.nodes.map((node) => (
 					<article key={node.id}>
