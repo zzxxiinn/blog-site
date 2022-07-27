@@ -1,17 +1,36 @@
 import * as React from "react"
-import type {GatsbyBrowser} from "gatsby"
+import type { GatsbyBrowser } from "gatsby"
 
 import "terminal.css"
 
 import "./src/styles/typography.css"
-import "./src/styles/global.css"
+import "./src/styles/main.styl"
 
 import Doodle from "./src/components/doodle"
 
-export const wrapPageElement: GatsbyBrowser["wrapPageElement"] = ({ element}) => {
+
+
+const doodleWrapperStyle: React.CSSProperties = {
+	position: 'absolute',
+	left: '0px',
+	top: '0px',
+	width: '100%',
+	height: '100%'
+}
+
+const mainWrapperStyle: React.CSSProperties = {
+	position: "relative",
+	width: '100vw',
+	height: '100vh',
+	overflow: 'scroll',
+	overflowX: 'hidden'
+}
+
+export const wrapPageElement: GatsbyBrowser["wrapPageElement"] = ({ element }) => {
+
 	return (
 		<>
-			<div className="index-doodle-wraper">
+			<div style={doodleWrapperStyle}>
 				<Doodle rule={`
 					@grid: 1 / 100vw 100vh;
 					background-color: #0a0c27;
@@ -28,11 +47,9 @@ export const wrapPageElement: GatsbyBrowser["wrapPageElement"] = ({ element}) =>
 								@lp
 						);
 					);
-				`}/>
+				`} />
 			</div>
-			<div style={{ backgroundColor: '#eee' }}>
-				{element}
-			</div>
+			<div style={mainWrapperStyle}>{element}</div>
 		</>
 	)
 }

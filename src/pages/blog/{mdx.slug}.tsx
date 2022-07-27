@@ -35,19 +35,6 @@ const BlogPost = ({data}: BlogPostProps) => {
 	return (
 		<Layout pageTitle={data.mdx.frontmatter.title}>
 			<p>Post: {data.mdx.frontmatter.date}</p>
-			{
-				(image !== undefined) && (
-					<>
-						<GatsbyImage image={image} alt={data.mdx.frontmatter.hero_image_alt} />
-						<p>
-							Photo Credit:{" "}
-							<a href={data.mdx.frontmatter.hero_image_credit_link}>
-								{data.mdx.frontmatter.hero_image_credit_text}
-							</a>
-						</p>
-					</>
-				)
-			}
 			<MDXProvider components={components}>
 				<MDXRenderer>
 					{data.mdx.body}
