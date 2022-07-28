@@ -1,12 +1,14 @@
 import path from 'path'
+import { GatsbyNode } from 'gatsby'
 
-export const onCreateWebpackConfig = ({ actions }) => {
+export const onCreateWebpackConfig: GatsbyNode['onCreateWebpackConfig'] = ({
+	actions
+}) => {
   actions.setWebpackConfig({
     resolve: {
       alias: {
         "@components": path.resolve(__dirname, "src/components"),
-        "@static": path.resolve(__dirname, "static"),
-				"@styles": path.resolve(__dirname, "styles")
+				"@styles": path.resolve(__dirname, "src/styles")
       }
     }
   });

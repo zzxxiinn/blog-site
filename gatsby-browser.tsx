@@ -23,13 +23,19 @@ const mainWrapperStyle: React.CSSProperties = {
 	width: '100vw',
 	height: '100vh',
 	overflow: 'scroll',
-	overflowX: 'hidden'
+	overflowX: 'auto'
+}
+
+const pageWrapperStyle: React.CSSProperties = {
+	position: "relative",
+	width: '100vw',
+	height: '100vh'
 }
 
 export const wrapPageElement: GatsbyBrowser["wrapPageElement"] = ({ element }) => {
 
 	return (
-		<>
+		<div style={pageWrapperStyle}>
 			<div style={doodleWrapperStyle}>
 				<Doodle rule={`
 					@grid: 1 / 100vw 100vh;
@@ -50,6 +56,6 @@ export const wrapPageElement: GatsbyBrowser["wrapPageElement"] = ({ element }) =
 				`} />
 			</div>
 			<div style={mainWrapperStyle}>{element}</div>
-		</>
+		</div>
 	)
 }
