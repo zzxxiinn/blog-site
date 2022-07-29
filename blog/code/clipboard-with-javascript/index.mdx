@@ -3,6 +3,50 @@ title: "使用 Javascript 复制内容到剪贴板"
 date: "2022-07-01"
 tags: ["JavaScript"]
 ---
+import {useRef} from 'react'
 
-Clipboard API 是浏览器新提供的剪贴板 API，用来替代旧版本 `document.execCommand()` 的剪贴板访问方式。
+export const Demo1 = () => {
+    const textInput = useRef(null);
+    const handleCopy = () => {
+        textInput.current.select()
+        document.execCommand("copy")
+    }
+    return <>
+        <section style="display: flex;" className="example">
+            <textarea ref={textInput}>The quick brown fox jumps over the lazy dog</textarea>
+            <button onClick={handleCopy} style="margin: 8px;">copy</button>
+            <textarea />
+        </section>
+        <p style="font-size: 12px;">点击按钮，并在右边输入框查看内容。</p>
+    </>
+}
+
+## `document.execCommand()`
+
+在大多数浏览器中都是都实现了 `document.execCommand()` 方法，提供了大量对选区（其实就是页面文档选中的内容）的操作，其中可以使用 `document.execCommand('copy')` 和 `document.execCommand('paste')` 触发浏览器自己的复制和粘贴。
+
+```javascript
+textInput.current.select()
+document.execCommand("copy")
+```
+
+Try it:
+<Demo1 />
+
+<br />
+因为是对选区内容的复制操作，所以 `document.execCommand('copy')` 复制的对象必须出现在页面中。也就是说，如果要复制的文本是 DOM 中不存在的字符串，你得先把它注入 DOM 并且选中它。并且通常情况下，得在事件回调函数中使用它，由用户自己触发会减少在某些浏览器中的报错。  
+
+```javascript
+button.addEventListener('click', (e) => {
+  const input = document.createElement('input');
+  document.body.appendChild(input);
+  input.value = text;
+  input.focus();
+  input.select();
+  const result = document.execCommand('copy');
+  if (result === 'unsuccessful') {
+    console.error('Failed to copy text.');
+  }
+});
+```
 

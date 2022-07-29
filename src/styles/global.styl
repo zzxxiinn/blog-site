@@ -1,17 +1,31 @@
-:root {
-  --global-font-size: 14px;
-  --font-stack: VonwaonBitmap, georgia, serif;
-}
+root 
+  --global-font-size 14px
+  --font-stack VonwaonBitmap, georgia, serif
 
-body {
-  color: hsla(0, 0%, 0%, 0.8);
-  width: 100vw;
-  height: 100vh;
-  background-color: #eee;
-  position: relative;
-}
+body
+  color hsla(0, 0%, 0%, 0.8)
+  width 100vw
+  height 100vh
+  background-color #eee
+  position relative
 
-code {
-  font-family: VonwaonBitmap, monospace;
-}
 
+code
+  font-family VonwaonBitmap, monospace
+
+.example
+  &::before
+    content '🌰'
+    display block
+    position absolute
+    font-size 18px
+    top -20px
+    left 4px
+  margin-top 24px
+  position relative
+  border 1px solid var(--secondary-color)
+  padding var(--global-space)
+  background-color var(--background-color)
+  font-size 12px
+
+  
