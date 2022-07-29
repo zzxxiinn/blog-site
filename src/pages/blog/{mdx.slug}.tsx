@@ -4,7 +4,7 @@ import {MDXRenderer} from "gatsby-plugin-mdx";
 import {MDXProvider} from "@mdx-js/react"
 import {GatsbyImage, getImage} from 'gatsby-plugin-image'
 
-import Layout from "../../components/layout";
+import Layout from "@components/layout";
 
 interface BlogPostProps {
 	data: {
