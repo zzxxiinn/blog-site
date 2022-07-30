@@ -97,6 +97,32 @@ navigator.permissions.query({name: "clipboard-read"}).then(result => {
 ### write()
 和 read() 类似， read 方法需要用户授权 "clipboard-write" 权限，通过后才可继续使用。
 
+write 操作同时和下面的代码结构相似：
+```javascript
+function setClipboard(text) {
+  let data = new DataTransfer();
+
+  data.items.add("text/plain", text);
+  navigator.clipboard.write(data).then(function() {
+    /* success */
+  }, function() {
+    /* failure */
+  });
+}
+```
+
+### writeText()
+将纯文本写入剪贴板：
+
+```javascript
+navigator.clipboard.writeText("<empty clipboard>").then(function() {
+  /* clipboard successfully set */
+}, function() {
+  /* clipboard write failed */
+});
+```
+
+
 
 
 
