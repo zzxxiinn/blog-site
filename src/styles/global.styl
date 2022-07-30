@@ -1,4 +1,4 @@
-root 
+:root 
   --global-font-size 14px
   --font-stack VonwaonBitmap, georgia, serif
 
@@ -13,12 +13,17 @@ body
 code
   font-family VonwaonBitmap, monospace
 
+pre
+  code
+    overflow auto
+
+
 .example
   &::before
     content '🌰'
     display block
     position absolute
-    font-size 18px
+    font-size 18px 
     top -20px
     left 4px
   margin-top 24px

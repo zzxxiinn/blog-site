@@ -21,9 +21,14 @@ export const Demo1 = () => {
     </>
 }
 
-## `document.execCommand()`
+## 1. `document.execCommand()`
 
 在大多数浏览器中都是都实现了 `document.execCommand()` 方法，提供了大量对选区（其实就是页面文档选中的内容）的操作，其中可以使用 `document.execCommand('copy')` 和 `document.execCommand('paste')` 触发浏览器自己的复制和粘贴。
+
+- 复制: document.execCommand('copy')
+- 剪切: document.execCommand('cut')
+- 粘贴: document.execCommand('paste')
+
 
 ```javascript
 textInput.current.select()
@@ -49,4 +54,49 @@ button.addEventListener('click', (e) => {
   }
 });
 ```
+
+
+## 2. `navigator.clipboard` 
+
+
+### object methods: 
+`navigator.clipboard` 提供了 4 个异步方法，执行后返回 Promise 对象。
+
+- read()      从剪贴板读取数据（包括图片）
+- readText()  从剪贴板读取文本
+- write()     将任意数据导入剪贴板
+- writeText() 将文本写入系统剪贴板
+
+### read()
+read 方法需要用户授权 "clipboard-read" 权限，通过后才可继续使用。
+
+常见的使用方式：
+```javascript
+navigator.permissions.query({name: "clipboard-read"}).then(result => {
+  // 授权成功后继续执行
+  if (result.state == "granted" || result.state == "prompt") {
+    navigator.clipboard.read().then(data => {
+      // data 是复制中的数据，在这里处理读取到的数据
+    });
+  }
+});
+
+```
+
+
+### readText()
+读取纯文本内容，如果需要读取图片， read() 会更适合你。
+
+```javascript
+  navigator.clipboard.readText().then(
+    clipText => document.getElementById("outbox").innerText = clipText
+  );
+```
+
+
+### write()
+和 read() 类似， read 方法需要用户授权 "clipboard-write" 权限，通过后才可继续使用。
+
+
+
 
