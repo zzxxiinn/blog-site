@@ -9,7 +9,6 @@ import "./src/styles/main.styl"
 import Doodle from "./src/components/doodle"
 
 
-
 const doodleWrapperStyle: React.CSSProperties = {
 	position: 'absolute',
 	left: '0px',
@@ -31,6 +30,7 @@ const pageWrapperStyle: React.CSSProperties = {
 	width: '100vw',
 	height: '100vh'
 }
+
 
 export const wrapPageElement: GatsbyBrowser["wrapPageElement"] = ({ element }) => {
 

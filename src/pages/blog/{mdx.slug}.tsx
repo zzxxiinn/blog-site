@@ -1,10 +1,11 @@
 import * as React from "react";
-import {graphql} from "gatsby";
-import {MDXRenderer} from "gatsby-plugin-mdx";
-import {MDXProvider} from "@mdx-js/react"
-import {GatsbyImage, getImage} from 'gatsby-plugin-image'
+import { graphql } from "gatsby";
+import { MDXRenderer } from "gatsby-plugin-mdx";
+import { MDXProvider } from "@mdx-js/react"
+import { GatsbyImage, getImage } from 'gatsby-plugin-image'
 
 import Layout from "@components/layout";
+import Code from "@components/code";
 
 interface BlogPostProps {
 	data: {
@@ -22,14 +23,12 @@ interface BlogPostProps {
 	}
 }
 
-const MyH1: React.FC = props => <h1 style={{color: "tomato"}} {...props} />
 
 const components = {
-	h1: MyH1,
+	code: Code
 }
 
-
-const BlogPost = ({data}: BlogPostProps) => {
+const BlogPost = ({ data }: BlogPostProps) => {
 	const image = getImage(data.mdx.frontmatter.hero_image)
 
 	return (

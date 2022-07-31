@@ -13,7 +13,7 @@ export const Demo1 = () => {
     }
     return <>
         <section style="display: flex;" className="example">
-            <textarea ref={textInput}>The quick brown fox jumps over the lazy dog</textarea>
+            <textarea ref={textInput} defaultValue="The quick brown fox jumps over the lazy dog"></textarea>
             <button onClick={handleCopy} style="margin: 8px;">copy</button>
             <textarea />
         </section>
