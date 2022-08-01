@@ -23,9 +23,10 @@ interface BlogPostProps {
 	}
 }
 
+const code: React.FC<React.PropsWithChildren> = ({ children }) => (<div>{ children}</div>)
 
 const components = {
-	pre: Code
+	code:code
 }
 
 const BlogPost = ({ data }: BlogPostProps) => {

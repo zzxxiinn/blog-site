@@ -37,8 +37,6 @@ export const LineContent = styled.span`
   display: table-cell;
 `;
 
-
-
 const Code: FC<PropsWithChildren> = (props) => (
 	<Highlight {...defaultProps} theme={theme} code={String(props.children)} language="jsx">
 		{({ className, style, tokens, getLineProps, getTokenProps }) => (
