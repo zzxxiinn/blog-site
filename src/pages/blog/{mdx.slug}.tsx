@@ -25,7 +25,7 @@ interface BlogPostProps {
 
 
 const components = {
-	code: Code
+	pre: Code
 }
 
 const BlogPost = ({ data }: BlogPostProps) => {
