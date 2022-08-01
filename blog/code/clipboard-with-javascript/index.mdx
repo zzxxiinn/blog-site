@@ -2,8 +2,11 @@
 title: "使用 Javascript 复制内容到剪贴板"
 date: "2022-07-01"
 tags: ["JavaScript"]
+embeddedImagesLocal:
+  - ./WX20220802-072103@2x.png
 ---
 import {useRef} from 'react'
+import { getImage, GatsbyImage } from 'gatsby-plugin-image';
 
 export const Demo1 = () => {
     const textInput = useRef(null);
@@ -76,11 +79,16 @@ navigator.permissions.query({name: "clipboard-read"}).then(result => {
   // 授权成功后继续执行
   if (result.state == "granted" || result.state == "prompt") {
     navigator.clipboard.read().then(data => {
-      // data 是复制中的数据，在这里处理读取到的数据
+      // data 是一个数组，每个数据都是 ClipboardItem 对象的实例
+      for (const clipboardItem of data) {
+        for (const type of clipboardItem.types) {
+          const blob = await clipboardItem.getType(type);
+          console.log(URL.createObjectURL(blob));
+        }
+      }
     });
   }
 });
-
 ```
 
 
@@ -122,7 +130,32 @@ navigator.clipboard.writeText("<empty clipboard>").then(function() {
 });
 ```
 
+## 3. `document` 的 `copy` 和 `paste` 事件
+很多网站在用户复制或者剪切内容时，最终粘贴的内容会带有版权提示信息（ 比如 CSDN,复制的内容超过 140 字符长度就会给你加上一长串文字 ）。
 
+<GatsbyImage alt='copy-content-with-copyright' image={getImage(props.localImages[0])} title='copy-content-with-copyright'/>
+
+
+下面的例子是截获 copy 事件，并将选取了内容转成大写塞到粘贴对象中。
+```javascript
+const source = document.querySelector('.source');
+
+source.addEventListener('copy', (event) => {
+  const selection = document.getSelection();
+  event.clipboardData.setData('text/plain', selection.toString().toUpperCase());
+  event.preventDefault();
+});
+```
+
+
+paste code example
+```javascript
+document.addEventListener('paste', async (e) => {
+  e.preventDefault();
+  const text = await navigator.clipboard.readText();
+  console.log('Pasted text: ', text);
+});
+```
 
 
 

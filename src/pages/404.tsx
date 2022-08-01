@@ -9,13 +9,13 @@ const pageStyles = {
 const headingStyles = {
   marginTop: 0,
   marginBottom: 64,
-	fontSize: '64px',
+  fontSize: '64px',
 }
 
 const paragraphStyles = {
-	fontSize: '24px',
+  fontSize: '24px',
   marginBottom: 48,
-	lineHeight: 1,
+  lineHeight: 1,
 }
 
 const codeStyles = {

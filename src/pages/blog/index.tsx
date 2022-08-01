@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Link, graphql} from "gatsby";
+import { Link, graphql } from "gatsby";
 import Layout from "../../components/layout";
 
 interface BlogProps {
@@ -17,7 +17,7 @@ interface BlogProps {
 	}
 }
 
-const BlogPage = ({data}: BlogProps) => {
+const BlogPage = ({ data }: BlogProps) => {
 	return (
 		<Layout pageTitle="这里是所有的内容">
 			{
@@ -37,18 +37,18 @@ const BlogPage = ({data}: BlogProps) => {
 }
 
 export const query = graphql`
-	query {
-		allMdx(sort: {fields: frontmatter___date, order: DESC}) {
-			nodes {
-				frontmatter {
-					date(formatString: "MMMM D, YYYY")
-					title
-				}
-				id
-				slug
-			}
-		}
-	}
+  query {
+    allMdx(sort: {fields: frontmatter___date, order: DESC}) {
+      nodes {
+        frontmatter {
+          date(formatString: "MMMM D, YYYY")
+          title
+        }
+        id
+        slug
+      }
+    }
+  }
 `
 
 export default BlogPage
