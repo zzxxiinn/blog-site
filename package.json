@@ -22,6 +22,7 @@
     "gatsby": "^4.15.2",
     "gatsby-image": "^3.11.0",
     "gatsby-plugin-image": "^2.15.1",
+    "gatsby-plugin-manifest": "^4.19.0",
     "gatsby-plugin-mdx": "^3.19.0",
     "gatsby-plugin-sharp": "^4.19.0",
     "gatsby-plugin-stylus": "^4.19.0",

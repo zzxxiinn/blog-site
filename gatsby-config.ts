@@ -21,7 +21,13 @@ const config: GatsbyConfig = {
         name: `blog`,
         path: `${__dirname}/blog`
       }
-    }
+    },
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        icon: 'src/assets/images/icon.png',
+      }
+    },
   ],
 }
 
