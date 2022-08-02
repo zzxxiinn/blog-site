@@ -1,7 +1,54 @@
 ---
-title: "使用 github action 完成持续集成与自动化部署"
-date: "2022-07-01"
+title: "持续集成与自动化部署自己的博客"
+date: "2022-07-15"
 tags: ["CICD"]
 ---
 
-todo
+> 对于程序员来说，将繁琐复杂的工作变成自动化工程，魅力真的很大。  
+
+业余的时间，整了个服务器，搞了个博客写点笔记。博客整体用的 Gatsby 去搭建的，服务器上使用 Docker+Portainer 进行镜像管理，代码放在 GitHub 上托管。
+
+整体打通 CI/CD 后的博客编写体验为：
+
+1. 本地修改项目，提交 commit 到 Github main 分支;
+2. Github Action 检测到 main 分支的 checkin，开始执行 Docker 打包任务;
+3. 打包完成后，将 Docker 镜像推送到 Docker Hub，并触发服务器上 Portainer 的 webhook;
+4. Portainer 执行更新服务镜像的任务，服务更新完成。
+
+而上述步骤中，我只需要关注博客编写操作本身，或者更多一点，将代码和博客更新推送到代码仓库，之后的步骤将像流水线自动执行。
+
+### GitHub Action
+当前项目打包的逻辑比较简单，Action 配置的逻辑如下：
+1. 触发方式是：往 main 分支提交内容，包括 push 和往 main 分支 merge(pr)。
+2. 安装依赖环境，提前登陆 DockerHub 账号。
+3. 执行打包脚本(`build_push.sh`)
+4. 使用 `joelwmale/webhook-action@2.1.0` 模块触发 Portainer 上配置的更新镜像的 Webhook。
+
+```yml
+name: Docker Image CI
+on:
+  push:
+    branches: [ "main" ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3.4.1
+      with:
+        node-version: 16
+    - name: Install dependencies
+      run: npm install
+    - name: Docker Login
+      uses: docker/login-action@v2.0.0
+      with:
+        username: Your dockerhub name
+        password: ${{ secrets.DOCKER_LOGIN_TOKEN }}
+    - name: Build the Docker image
+      run: bash ./build_push.sh
+    - name: Trigger Webhook
+      uses: joelwmale/webhook-action@2.1.0
+      with:
+        url: ${{ secrets.PORTAINER_CONTAINER_WEBHOOK }}
+```

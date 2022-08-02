@@ -1,6 +1,8 @@
 :root 
   --global-font-size 14px
   --font-stack VonwaonBitmap, georgia, serif
+  --code-bg-color #b8eaff
+  --blockquote-bg-color #f2c1ff
 
 body
   color hsla(0, 0%, 0%, 0.8)
@@ -11,6 +13,20 @@ body
 
 code
   font-family var(--font-stack)
+
+blockquote
+  background-color var(--blockquote-bg-color)
+  &::after
+    left 0.5ch
+  p
+    margin 0
+
+h1, h2, h3, h4, h5, h6
+  text-shadow -0.1em 0.1em #ff5e5e, 0.2em -0.1em 0em #5e5eff
+  padding-left 0.4em
+  & > a
+    color #5e5eff
+    text-shadow -0.1em 0.1em var(--font-color), 0.1em -0.1em 0em #ff5e5e
 
 
 .example

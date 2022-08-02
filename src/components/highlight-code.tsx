@@ -32,6 +32,7 @@ const LineNo = styled.span`
   padding-right: 1em;
   user-select: none;
   opacity: 0.5;
+  white-space: nowrap;
 `;
 
 const LineContent = styled.span`
@@ -39,7 +40,6 @@ const LineContent = styled.span`
 `;
 
 const HighlightCode: FC<MDXProviderProps> = (props) => {
-  console.log(props);
   const codeItem = props.children;
   const {
     children,
