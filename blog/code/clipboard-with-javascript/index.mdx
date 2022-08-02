@@ -136,19 +136,28 @@ navigator.clipboard.writeText("<empty clipboard>").then(function() {
 <GatsbyImage alt='copy-content-with-copyright' image={getImage(props.localImages[0])} title='copy-content-with-copyright'/>
 
 
-下面的例子是截获 copy 事件，并将选取了内容转成大写塞到粘贴对象中。
+下面的例子是截获 copy 事件，并将版权信息塞到用户复制的内容结尾（代码来自网络）
 ```javascript
-const source = document.querySelector('.source');
-
-source.addEventListener('copy', (event) => {
-  const selection = document.getSelection();
-  event.clipboardData.setData('text/plain', selection.toString().toUpperCase());
-  event.preventDefault();
-});
+function e(t) {
+  if(window.getSelection().getRangeAt(0).toString().length>140){
+    t.preventDefault();
+    var e;e=(window.getSelection()+a.textData).replace(/[\u00A0]/gi," ");
+    window.getSelection(),a.htmlData;
+    if(t.clipboardData)t.clipboardData.setData("text/plain",e);
+    else{
+      if(window.clipboardData) return window.clipboardData.setData("text",e);
+    }
+  }
+}
+var a=null,i=function(t,e,n) {
+  t.addEventListener?t.addEventListener(e,n,!1):t.attachEvent?t.attachEvent("on"+e,n):t["on"+e]=n};
+  t.prototype.init=function(t,n,a){
+    this.textData=n,this.htmlData=a,i(t,"copy",e)
+  }
+}
 ```
 
-
-paste code example
+粘贴的事件稍微简单些：
 ```javascript
 document.addEventListener('paste', async (e) => {
   e.preventDefault();
