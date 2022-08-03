@@ -1,5 +1,6 @@
 import * as React from "react"
 import type { GatsbyBrowser } from "gatsby"
+import styled from 'styled-components'
 
 import "terminal.css"
 
@@ -9,36 +10,35 @@ import "./src/styles/main.styl"
 import Doodle from "./src/components/doodle"
 
 
-const doodleWrapperStyle: React.CSSProperties = {
-  position: 'absolute',
-  left: '0px',
-  top: '0px',
-  width: '100%',
-  height: '100%'
-}
+const DoodleWrapper = styled.div`
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+`
 
-const mainWrapperStyle: React.CSSProperties = {
-  position: "relative",
-  width: '100vw',
-  height: '100vh',
-  overflow: 'scroll',
-  overflowX: 'auto',
-  padding: '5em 0'
-}
+const ContentWrapper = styled.section`
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  padding: 5em 0;
+`
 
-const pageWrapperStyle: React.CSSProperties = {
-  position: "relative",
-  width: '100vw',
-  height: '100vh'
-}
+const PageWrapper = styled.div`
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+`
 
 
 export const wrapPageElement: GatsbyBrowser["wrapPageElement"] = ({ element }) => {
 
   return (
-    <div style={pageWrapperStyle}>
-      <div style={doodleWrapperStyle}>
-        {/* <Doodle rule={`
+    <PageWrapper>``
+      <DoodleWrapper>
+        <Doodle rule={`
           @grid: 1 / 100vw 100vh;
           background-color: #0a0c27;
           background-size: 200px 200px;
@@ -54,9 +54,9 @@ export const wrapPageElement: GatsbyBrowser["wrapPageElement"] = ({ element }) =
                 @lp
             );
           );
-        `} /> */}
-      </div>
-      <div style={mainWrapperStyle}>{element}</div>
-    </div>
+        `} />
+      </DoodleWrapper>
+      <ContentWrapper>{element}</ContentWrapper>
+    </PageWrapper>
   )
 }
