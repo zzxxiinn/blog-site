@@ -16,11 +16,27 @@ function createPostTemplate(type, name) {
   const postWillCreatePath = path.join(postDirPath, "index.mdx");
   const tempString = `---
 title: "${name}"
-date: "${dayjs(new Date()).format("YY-MM-DD")}"
+date: "${dayjs(new Date()).format("YYYY-MM-DD")}"
 tags: ["${type}"]
 ---
 
-## hello world!
+## 这篇文章讲什么？
+
+## 我为什么写这篇文章？
+
+## 这篇文章对谁有用？
+
+## 有什么用？
+
+## 正文
+
+## 一些名词解释
+
+## 步骤概览
+
+## 具体步骤
+
+## 问题： xxxx?
 `;
 
   try {

@@ -40,7 +40,7 @@ export const wrapPageElement: GatsbyBrowser["wrapPageElement"] = ({ element }) =
             );
           `}
       </css-doodle>
-      {element}
+      <section>{element}</section>
     </main>
   )
 }

@@ -1,0 +1,19 @@
+---
+title: "using-dd-for-generating-files-in-linux"
+date: "2022-08-05"
+tags: ["linux"]
+---
+
+## 这篇文章讲什么？
+在服务端开发过程中，经常遇到需要特定大小的文件的需求，查了一下，linux 环境下有 dd 这个命令，可以快速打到这个效果。在这里记录一下 dd 的一些使用方式和技巧。
+
+## 正文
+
+### dd 命令是是什么
+
+Linux dd 命令用于读取、转换和输出数据。可以从 std-in 或者文件中读取数据，根据指定的格式转换数据，然后输出都文件或者 std-out 中。
+
+**参数**
+- if=your-file-name: 输入文件名，默认为 std-in
+- of=your-file-name: 输出文件名，默认为标准输出
+- ibs=bytes
