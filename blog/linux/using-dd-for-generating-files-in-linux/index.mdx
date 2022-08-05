@@ -1,5 +1,5 @@
 ---
-title: "using-dd-for-generating-files-in-linux"
+title: "在Linux中使用dd快速创建文件"
 date: "2022-08-05"
 tags: ["linux"]
 ---
@@ -13,7 +13,26 @@ tags: ["linux"]
 
 Linux dd 命令用于读取、转换和输出数据。可以从 std-in 或者文件中读取数据，根据指定的格式转换数据，然后输出都文件或者 std-out 中。
 
-**参数**
+### 常用参数
 - if=your-file-name: 输入文件名，默认为 std-in
 - of=your-file-name: 输出文件名，默认为标准输出
-- ibs=bytes
+- ibs=bytes: 一次读入 bytes 个字节
+- obs=bytes: 一次输出 bytes 个字节
+- bs=bytes: 同时设置读入/输出 bytes 个字节
+- count=blocks: 仅拷贝 blocks 个块，块大小等于 ibs
+
+
+### 示例
+```bash
+# 当前目录生成一个名为 gigabyte 大小为 1G 的文件
+$ dd if=/dev/zero of=gigabyte bs=1M count=1000 
+
+# 当前目录生成一个名为 megabyte 大小为 1M 的文件
+$ dd if=/dev/zero of=megabyte bs=1M count=1
+
+# 当前目录生成一个名为 kilobyte 大小为 1K 的文件
+$ dd if=/dev/zero of=kilobyte bs=1K count=1
+
+# 将tmp目录下的大文件写0，可以释放磁盘空间
+$ dd if=/dev/zero of=/tmp/bigfile
+```

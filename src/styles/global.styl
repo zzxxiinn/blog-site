@@ -10,6 +10,7 @@ body
   height 100vh
   background-color var(--background-color)
   position relative
+  overflow auto
 
 code
   font-family var(--font-stack)
@@ -28,6 +29,12 @@ h1, h2, h3, h4, h5, h6
     color #5e5eff
     text-shadow -0.1em 0.1em var(--font-color), 0.1em -0.1em 0em #ff5e5e
 
+
+.main-content-wrapper
+  width 100vw
+  height 100vh
+  position relative
+  overflow auto
 
 .example
   &::before
@@ -48,7 +55,3 @@ h1, h2, h3, h4, h5, h6
   left 0
   z-index -1
 
-  & + section
-    position relative
-    padding 4em 0
-    height 100vh

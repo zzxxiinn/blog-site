@@ -5,7 +5,6 @@ import { Link } from "gatsby"
 const pageStyles = {
   color: "#232129",
   padding: "96px",
-  backgroundColor: '#eee',
 }
 const headingStyles = {
   marginTop: 0,
@@ -33,7 +32,7 @@ const NotFoundPage = () => {
     <main style={pageStyles}>
       <title>Not found</title>
       <h1 style={headingStyles}>Page not found</h1>
-      <p style={paragraphStyles}>
+      <h3 style={paragraphStyles}>
         Sorry <span role="img" aria-label="Pensive emoji"> 😔 </span>we couldn’t find what you were looking for.
         <br />
         {process.env.NODE_ENV === "development" ? (
@@ -43,7 +42,7 @@ const NotFoundPage = () => {
         ) : null}
         <br />
         <Link to="/">Go home</Link>.
-      </p>
+      </h3>
     </main>
   )
 }

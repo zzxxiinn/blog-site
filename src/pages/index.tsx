@@ -1,9 +1,8 @@
 import * as React from "react";
 import styled from "styled-components";
-
+import Nav from '../components/nav'
 
 const Section = styled.section`
-  background-color: var(--background-color);
   width: 100vw;
   height: 100vh;
   margin: auto;
@@ -15,6 +14,13 @@ const Section = styled.section`
 const Header = styled.header`
   width: 100%;
   text-align: center;
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+  }
 `
 
 const H1 = styled.h1`
@@ -33,6 +39,7 @@ const IndexPage = () => {
     <Section>
       <Header>
         <H1>你好，世界！</H1>
+        <Nav />
       </Header>
     </Section>
   )

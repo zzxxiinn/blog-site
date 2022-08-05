@@ -20,7 +20,7 @@ declare global {
 export const wrapPageElement: GatsbyBrowser["wrapPageElement"] = ({ element }) => {
 
   return (
-    <main>
+    <>
       <css-doodle class="doodle-background">
         {`
             @grid: 1 / 100vw 100vh;
@@ -40,7 +40,7 @@ export const wrapPageElement: GatsbyBrowser["wrapPageElement"] = ({ element }) =
             );
           `}
       </css-doodle>
-      <section>{element}</section>
-    </main>
+      <main className="main-content-wrapper">{element}</main>
+    </>
   )
 }

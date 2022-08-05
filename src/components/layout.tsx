@@ -1,43 +1,20 @@
 import * as React from 'react';
-import { Link, useStaticQuery, graphql } from 'gatsby';
+import { useStaticQuery, graphql } from 'gatsby';
 import styled from 'styled-components';
+import Nav from './nav'
+
 
 export interface LayoutProps extends React.PropsWithChildren {
   pageTitle?: string,
 }
 
-interface RouteMap {
-  name: string
-  route: string
-}
 
-const BaseRouteMaps: RouteMap[] = [
-  { name: 'Home', route: '/' },
-  { name: 'Blog', route: '/blog' },
-]
 
-const Ul = styled.ul`
-  display: flex;
+const Article = styled.article`
+  min-height: 80vh;
+  padding: 5em 0;
 `
 
-const Li = styled.li`
-  display: inline-block;
-  margin-right: 8px;
-`
-
-const renderNav = () => (
-  <nav>
-    <Ul>
-      {
-        BaseRouteMaps.map(routeMap => (
-          <Li key={routeMap.name}>
-            <Link to={routeMap.route}>{routeMap.name}</Link>
-          </Li>
-        ))
-      }
-    </Ul>
-  </nav>
-)
 
 const Layout = ({ pageTitle, children }: LayoutProps) => {
   const data = useStaticQuery(graphql`
@@ -47,15 +24,15 @@ const Layout = ({ pageTitle, children }: LayoutProps) => {
   `)
 
   return (
-    <div>
+    <Article>
       <title>{pageTitle} | {data.site.siteMetadata.title}</title>
 
       <main className="container">
-        {renderNav()}
+        <Nav />
         <h1>{pageTitle}</h1>
         {children}
       </main>
-    </div>
+    </Article>
   )
 }
 
