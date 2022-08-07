@@ -9,7 +9,15 @@ const blogPath = path.join(__dirname, "..", "blog");
 const filenameReg = new RegExp("^[0-9a-zA-Z-_]+$");
 
 const NEW_TYPE = "+ Create new type";
-const currBlogTypes = [...fs.readdirSync(blogPath), NEW_TYPE];
+
+function getPostTypes() {
+  const types = fs.readdirSync(blogPath)
+    .filter(
+      p => fs.statSync(path.join(blogPath, p)).isDirectory && filenameReg.test(p)
+    )
+
+  return [...types, NEW_TYPE]
+}
 
 function createPostTemplate(type, name) {
   const postDirPath = path.join(blogPath, type, name);
@@ -41,9 +49,9 @@ tags: ["${type}"]
 
   try {
     fs.ensureDirSync(postDirPath);
-    fs.writeFileSync(postWillCreatePath, tempString, { encoding: 'utf8'});
+    fs.writeFileSync(postWillCreatePath, tempString, { encoding: 'utf8' });
     console.log(`${postWillCreatePath} created! enjoy your writing!`)
-  } catch(e) {
+  } catch (e) {
     console.error('Something is error: ', e);
   }
 }
@@ -55,7 +63,7 @@ function main() {
         type: "list",
         name: "type",
         message: "What kind of your new post?",
-        choices: currBlogTypes,
+        choices: getPostTypes(),
       },
     ])
     .then(({ type }) => {

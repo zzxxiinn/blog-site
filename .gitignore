@@ -6,5 +6,6 @@ src/gatsby-types.d.ts
 .vscode/
 *error.log
 
+.DS_Store/
 *.lock
 *-lock.json
