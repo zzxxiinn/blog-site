@@ -1,0 +1,49 @@
+---
+title: "execution-timer"
+date: "2022-08-08"
+tags: ["python"]
+---
+
+### 这篇文章讲什么？
+为 Python 代码添加执行计时器。实际上就是分别在方法调用前和调用后分别记录一次时间，然后得出执行时间。
+
+#### 正文
+```python
+import time
+
+class ExecutionTimer:
+    def __init__(self) -> None:
+        self._value_ns = 0
+        self._start = None
+
+    def start(self):
+        self._start = time.perf_counter_ns()
+
+    def stop(self):
+        self._value_ns = time.perf_counter_ns() - self._start
+        self._start = None
+
+    @property
+    def elapsed_ms(self) -> float:
+        return self._value_ns / 1000000
+
+    @property
+    def elapsed(self) -> float:
+        return self._value_ns / 1000000000
+
+    def __repr__(self):
+        return f"{self.elapsed_ms:0.2f}ms"
+
+```
+
+
+#### 使用
+```python
+elapsed_ms_func = ExecutionTimer()
+
+elapsed_ms_func.start()
+# run your code here
+elapsed_ms_func.stop()
+
+print(f"total elapsed:{elapsed_ms_func}")
+```
