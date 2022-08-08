@@ -10,12 +10,12 @@
   "scripts": {
     "dev": "gatsby clean && gatsby develop",
     "start": "gatsby develop",
-    "build": "node ./scripts/slim-fonts.js && gatsby build",
+    "build": "npm run gen-slim-fonts && gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "typecheck": "tsc --noEmit",
     "new": "node ./scripts/new-post.js",
-    "gen-slim-fonts": "node ./scripts/slim-fonts.js"
+    "gen-slim-fonts": "node ./scripts/slim-fonts"
   },
   "dependencies": {
     "@mdx-js/mdx": "^1.6.22",
