@@ -1,0 +1,95 @@
+---
+title: "在 Sanic 中使用 loguru"
+date: "2022-08-08"
+tags: ["python"]
+embeddedImagesLocal:
+  - ./image_1.png
+  - ./image_2.png
+  - ./image_3.png
+---
+
+import { getImage, GatsbyImage } from 'gatsby-plugin-image';
+
+
+## 在项目中使用 loguru 作为日志工具
+### 为什么
+懒，不想自己切割日志（当然也可以自己写，不过没有那么多花里胡哨的颜色了）。
+
+> PS: 使用 FileHandler/RotatingFileHandler 等类作为文件切割的配置。
+> [logging.handlers --- 日志处理程序](https://docs.python.org/zh-cn/3/library/logging.handlers.html#logging.FileHandler)
+
+### 怎么做
+
+```python
+class Rotator:
+    def __init__(self, *, size, at):
+        now = datetime.now()
+        self._size_limit = size
+        self._time_limit = now.replace(hour=at.hour, minute=at.minute, second=at.second)
+
+        if now >= self._time_limit:
+            self._time_limit += timedelta(days=1)
+
+    def should_rotate(self, message, file):
+        file.seek(0, 2)
+        if file.tell() + len(message) > self._size_limit:
+            return True
+        if message.record["time"].timestamp() > self._time_limit.timestamp():
+            self._time_limit += timedelta(days=1)
+            return True
+        return False
+
+LOGGER_LVL_SET: Set[str] = {'info', 'debug', 'error', 'warning'}
+    
+def create_logger(log_root):
+    # Rotate file if over 500 MB or at midnight every day
+    rotator = Rotator(size=5e+8, at=time(0, 0, 0))
+
+    for lvl in LOGGER_LVL_SET:
+        logger.add(create_log_file(log_root, lvl), rotation=rotator.should_rotate, level=lvl.upper())
+
+    return logger
+
+```
+
+
+## 将 loguru 替换成 Sanic 默认使用的 logger 工具
+### 为什么
+
+Sanic 自带一套 logger 配置，上面的配置会导致终端有两套输出格式，不好看，并且 Sanic  的输出不会配置到同一个文件，所以将 Sanic 的looger 替换成 loguru。
+
+<GatsbyImage alt='default-sanic-logger-style' image={getImage(props.localImages[0])} title='default-sanic-logger-style'/>
+
+### 怎么做
+
+参考 Issue： [Two line logged for each statement?](https://github.com/Delgan/loguru/issues/112)
+
+```python
+# issue: https://github.com/Delgan/loguru/issues/112#issuecomment-515385926
+# Redirect all logging to loguru
+class InterceptHandler(logging.Handler):
+    def emit(self, record):
+        # Retrieve context where the logging call occurred, this happens to be in the 6th frame upward
+        logger_opt = logger.opt(depth=6, exception=record.exc_info)
+        logger_opt.log(record.levelno, record.getMessage())
+        
+# 修改 create_logger
+def create_logger(log_root):
+    # ----------------- 添加这两行，替换 Sanic 默认 logger 配置
+    logging.getLogger("sanic.root").handlers.clear()
+    logging.basicConfig(handlers=[InterceptHandler()], level=0)
+    
+    # Rotate file if over 500 MB or at midnight every day
+    rotator = Rotator(size=5e+8, at=time(0, 0, 0))
+
+    for lvl in LOGGER_LVL_SET:
+        logger.add(create_log_file(log_root, lvl), rotation=rotator.should_rotate, level=lvl.upper())
+
+    return logger
+```
+
+### 修改后
+
+终端输出格式一致，并且在输出文件中可以看到 Sanic 日志。
+<GatsbyImage alt='sanic-logger-with-loguru-in-terminal' image={getImage(props.localImages[1])} title='sanic-logger-with-loguru-in-terminal'/>
+<GatsbyImage alt='sanic-logger-with-loguru-in-file' image={getImage(props.localImages[2])} title='sanic-logger-with-loguru-in-file'/>
