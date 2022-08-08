@@ -1,0 +1,143 @@
+---
+title: "slim-web-fonts-down"
+date: "2022-08-09"
+tags: ["code"]
+embeddedImagesLocal:
+    - ./before-slim.png
+    - ./after-slim.png
+    - ./ripgrep-result.png
+---
+
+import { getImage, GatsbyImage } from 'gatsby-plugin-image';
+
+## 这篇文章讲什么？ 
+使用 `ripgrep` 和 `fontmin` 在项目打包流程中加入字体精简，使字体库文件压缩，体积更小。
+
+<p style="font-size: 12px; color: #999; margin-bottom: 0;">压缩前</p>
+<GatsbyImage alt='after-slim' image={getImage(props.localImages[0])} title='before-slim'/>
+
+<br />
+<br />
+
+<p style="font-size: 12px; color: #999; margin-bottom: 0;">压缩后</p>
+<GatsbyImage alt='after-slim' image={getImage(props.localImages[1])} title='after-slim'/>
+
+
+## 我为什么写这篇文章？
+种种原因，博客域名不在国内，为了加快加载速度，精简资源包大小，其中注意到字体库的大小，收集和总结了以下方式。
+
+## 正文
+
+### 使用 `ripgrep` 获取项目中使用到的字符
+#### `ripgrep` 是什么
+[github 仓库地址 🔗](https://github.com/BurntSushi/ripgrep)
+> ripgrep 是一个面向行的搜索工具，它在遵循 gitignore 规则的同时，递归地搜索当前目录以寻找正则表达式模式。  
+
+也就是说，它能检测执行环境中的 `.gitignore` 文件，选择没有被忽视的目录，递归的搜索符合所提供的正则表达式的 **文件内容** （默认会对当前目录下所有文件（除了二进制和隐藏文件）进行检索）。
+
+#### 我是这么使用的
+```bash
+rg -e '[\w\d\p{P}]' ```your-path-here``` -oN --no-filename | sort | uniq | tr -d '\n'
+```
+
+<GatsbyImage alt='ripgrep-result' image={getImage(props.localImages[2])} title='ripgrep-result'/>
+<br />
+<br />
+
+
+**其中：**
+- **-e'[\w\d\p{P}]'**  指定正则表达式，过滤出所有字符、标点符号。
+- **-oN --no-filename** 是控制打印结果的开关，因为预期只希望打印出匹配到的内容，其中：
+    - **-o** 只打印匹配的字符串
+    - **-N** 不打印匹配的行号
+    - **--no-filename** 不打印匹配的文件名
+- **sort|uniq** 用于对汉字进行排序去重
+- **tr -d '\n'** 去掉`\n`换行符，将所有汉字合并到一行，其中 -d 表示删除
+
+### 使用 `fontmin` 从目标字体库中挑选需要的文字
+#### `fontmin` 是什么
+[github 仓库地址 🔗](https://github.com/ecomfe/fontmin)
+Fontmin 是一个纯 JavaScript 实现的字体子集化方案。
+
+提供了 ttf 子集化，eot/woff/svg 格式转换，css 生成 等功能，助推 webfont 发展，提升网页文字体验。
+
+#### 怎么使用它
+```javascript
+var fontmin = new Fontmin()
+    .src(fontSrc)
+    .use(Fontmin.glyph({
+      text: 'Your-characher-here',
+      hinting: false            // keep ttf hint info (fpgm, prep, cvt). default = true
+    }));
+
+fontmin.run(function (err, files) {
+    if (err) { throw err; }
+    console.log(files[0])       // { contents: <Buffer 00 01 00 ...> }
+}
+```
+
+
+### 整合脚本
+自己需求是获取所有的字符，整合成新的字体文件，最后转成 base64 在代码中引入（提前加载，不想看到字体闪烁）。
+
+```javascript
+async function calcGlyph() {
+  let stdout, stderr
+  const command = `-e '[\\w\\d\\p{P}]' ${basePath} -oN --no-filename | sort | uniq | tr -d '\\n'`
+  if (process.platform === 'darwin') {
+    ({ stdout, stderr } = await exec(`${__dirname}/tools/ripgrep-darwin/rg ${command}`));
+  } else {
+    ({ stdout, stderr } = await exec(`rg ${command}`));
+  }
+
+  console.log('💡 Got those characters:', stdout);
+  if (stderr) {
+    console.error('⛔ Got characters failed with error:', stderr);
+    throw stderr
+  }
+
+  return stdout
+}
+// contents = fs.readFileSync('/path/to/file.jpg', {encoding: 'base64'});
+async function calcGlyph() {
+  let stdout, stderr
+  const command = `-e '[\\w\\d\\p{P}]' ${basePath} -oN --no-filename | sort | uniq | tr -d '\\n'`
+  if (process.platform === 'darwin') {
+    ({ stdout, stderr } = await exec(`${__dirname}/tools/ripgrep-darwin/rg ${command}`));
+  } else {
+    ({ stdout, stderr } = await exec(`rg ${command}`));
+  }
+
+  console.log('💡 Got those characters:', stdout);
+  if (stderr) {
+    console.error('⛔ Got characters failed with error:', stderr);
+    throw stderr
+  }
+  return stdout
+}
+
+async function genFonts() {
+  var fontmin = new Fontmin()
+    .src(fontSrc)
+    .use(Fontmin.glyph({
+      text: await calcGlyph(),
+      hinting: false         // keep ttf hint info (fpgm, prep, cvt). default = true
+    }));
+
+  fontmin.run(function (err, files) {
+    if (err) { throw err; }
+    // console.log(files[0].contents.toString('base64'));
+    const fontBase64 = files[0].contents.toString('base64');
+    const templateFontFamily = `@font-face {
+  font-family: "VonwaonBitmap";
+  src: url(data:application/font-ttf;charset=utf-8;base64,${fontBase64}) format('truetype');
+}`;
+    console.log('📦 Generating Fonts at: ', fontDest)
+    fs.ensureDirSync(path.dirname(fontDest))
+    fs.writeFile(fontDest, templateFontFamily)
+    console.log('✨ New font file generated!');
+  });
+}
+
+genFonts()
+```
