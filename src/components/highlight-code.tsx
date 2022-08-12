@@ -14,7 +14,7 @@ const Pre = styled.pre`
   padding: 0.5em;
   overflow: auto;
   border: none;
-  font-family: var(--font-stack);
+  font-family: var(--code-font-stack);
 
   & .token-line {
     line-height: 1.3em;
