@@ -1,0 +1,81 @@
+---
+title: "JWT 是啥？"
+date: "2022-08-12"
+tags: ["jwt"]
+---
+
+## 是什么?
+
+JSON Web Token (又称 JWT) 是一个非常轻巧的 [规范](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-json-web-token-32)。规范允许使用 JWT 在用户和服务器之间传递安全可靠的信息。
+
+## JWT 组成
+
+一条 JWT 记录实际上就是一个字符串，它由三部分组成： **Header**(头部)、**Payload**(载荷)、**Signature**(签名)
+HeaderPart.PayloadPart.SignaturePart
+
+### Header
+
+JWT Header 用于描述该 JWT 的最基本的信息，例如其类型和签名的算法。
+
+```json
+{
+  "typ": "JWT",
+  "alg": "HS256"
+}
+```
+
+并且经过 BASE64 编码后，作为 JWT 的首段（Header）
+
+```text
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
+```
+
+### Payload
+
+Payload 存放需要传递的数据，例如：
+
+```json
+{
+    "iss": "John Wu JWT",
+    "iat": 1441593502,
+    "exp": 1441594722,
+    "aud": "www.example.com",
+    "sub": "jrocket@example.com",
+    "from_user": "B",
+    "target_user": "A"
+}
+```
+
+其中前五个字段是由 JWT 的标准所定义的：
+
+- `iss`: 该 JWT 的作者
+- `sub`: 该 JWT 面相的用户
+- `aud`: 该接收 JWT 的一方
+- `exp`: expires 过期时间
+- `iat`: issued at 签发时间
+
+经过 Base64 编码后得到：
+
+```text
+eyJpc3MiOiJKb2huIFd1IEpXVCIsImlhdCI6MTQ0MTU5MzUwMiwiZXhwIjoxNDQxNTk0NzIyLCJhdWQiOiJ3d3cuZXhhbXBsZS5jb20iLCJzdWIiOiJqcm9ja2V0QGV4YW1wbGUuY29tIiwiZnJvbV91c2VyIjoiQiIsInRhcmdldF91c2VyIjoiQSJ9
+```
+
+### 签名
+
+最后是签名部分，前两部分使用 `.`连接在一起：
+
+```text
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJKb2huIFd1IEpXVCIsImlhdCI6MTQ0MTU5MzUwMiwiZXhwIjoxNDQxNTk0NzIyLCJhdWQiOiJ3d3cuZXhhbXBsZS5jb20iLCJzdWIiOiJqcm9ja2V0QGV4YW1wbGUuY29tIiwiZnJvbV91c2VyIjoiQiIsInRhcmdldF91c2VyIjoiQSJ9
+```
+
+签名需要将上面的字符串通过 HS256 算法加密，这一步需要提供一个密钥字符串，假设为 `Key-Must-Be-at-least-32-bytes-in-length!` (最少 32 位)，最后得到 加密后的内容：
+
+```text
+EsKdb5iEh9zyZQVrQ54lOXn1iR6N58goHlJ6CSnrxTY
+```
+
+最后拼接得出：
+
+```text
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJKb2huIFd1IEpXVCIsImlhdCI6MTQ0MTU5MzUwMiwiZXhwIjoxNDQxNTk0NzIyLCJhdWQiOiJ3d3cuZXhhbXBsZS5jb20iLCJzdWIiOiJqcm9ja2V0QGV4YW1wbGUuY29tIiwiZnJvbV91c2VyIjoiQiIsInRhcmdldF91c2VyIjoiQSJ9.EsKdb5iEh9zyZQVrQ54lOXn1iR6N58goHlJ6CSnrxTY
+```

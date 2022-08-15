@@ -1,6 +1,12 @@
+@font-face {
+  font-family: "JetBrainsMono";
+  src: url("./fonts//JetBrainsMono-Bold.ttf");
+}
+
 :root
   --global-font-size 14px
   --font-stack VonwaonBitmap, georgia, serif
+  --code-font-stack JetBrainsMono, georgia, serif
   --code-bg-color #b8eaff
   --blockquote-bg-color #f2c1ff
 
@@ -12,8 +18,8 @@ body
   position relative
   overflow auto
 
-code
-  font-family var(--font-stack)
+pre, code
+  font-family var(--code-font-stack)
 
 blockquote
   background-color var(--blockquote-bg-color)
