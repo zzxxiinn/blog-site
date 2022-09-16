@@ -1,0 +1,141 @@
+---
+title: "handle-excel-with-pywin32"
+date: "2022-09-13"
+tags: ["python"]
+---
+
+win32com 是使用 python 通过 RPC 对 Excel VBA 的封装。它实现的一些方法和 VBA 提供的方法类似。
+
+- [Excel VBA Reference](https://docs.microsoft.com/en-us/office/vba/api/overview/excel)
+下面记录一些使用过程中，最常用的一些方法和属性。
+
+### 打开 Excel 应用
+
+```python
+from win32com.client import Dispatch, gencache
+
+# 使用 wps 驱动 Excel
+xl_app = gencache.EnsureDispatch("ket.Application")
+
+# 使用 office 驱动 Excel
+xl_app = Dispatch("Excel.Application")
+
+xl_app.Visible = False      # 如果是True  会打开excel程序（界面）
+xl_app.DisplayAlerts = 0    # 不显示警告信息
+
+
+# 推出当前 Excel 应用实例
+xl_app.Quit()
+```
+
+### Workbooks
+
+#### 打开 excel
+工作簿引用从 1 开始(相对从 0 开始的编程思维。。)
+
+```python
+# 打开 excel 文件，获取工作簿对象
+wb = xl_app.Workbooks.Open("./path-to-excel.xls")
+wb = xl_app.Workbooks("Book1")
+wb = xl_app.Workbooks('xxx.xlsx')
+
+# 以只读方式打开 excel 文件
+wb = xls.Workbooks.Open(fullPath, ReadOnly = False)
+
+# 打开有密码的 excel 文件
+wb = xls.Workbooks.Open(filepath, UpdateLinks=3, ReadOnly=False, Format=None, Password=passWords)
+```
+
+
+#### 关闭 excel
+
+```python
+
+# 保存当前工作簿
+wb.Save()
+
+# 工作簿另存为
+wb.SaveAs(Filename='C:\\temp\\mysheet.xls')
+
+# 保存并关闭当前工作簿，其中参数为 True 为保存， False 为不保存
+wb.Close(True)
+```
+
+### 一些属性
+
+```PYTHON
+wb_count = xl_app.Workbooks.Count   # 工作簿数量
+wb_path = xl_app.Workbooks(i).Path  # 工作簿路径
+wb_name = xl_app.Workbooks(i).Name  # 工作簿名称
+wb.Checkcompatibility = False
+```
+
+## Sheets
+
+### 访问 Sheets 对象
+```python
+# 获取当前激活的 Sheet
+ws = xl_app.ActiveSheet  
+ws = xl_app.ActiveWorkbook.ActiveSheet
+
+# 通过索引访问
+ws = xl_app.Workbooks(1).Sheets(1)
+ws = wb.Sheets(1)
+
+# 通过名称访问
+ws = xl_app.Workbooks("Book1").Sheets("Sheet1")
+ws = wb.Sheets("Sheet1")
+```
+
+### Sheets 对象的一些属性
+```python
+wb.Worksheets.Count                                         # 获取工作表个数
+wb.Worksheets(2).Name = 'Details'                           # 工作簿更名
+sheets_names = [ws.Name for ws in wb.Worksheets]            # 获取工作簿所有 sheet 名称
+sheets_date =[sheetObj.UsedRange.Value for sheetObj in wb.Worksheets] # 获取所有 sheet 的内容
+```
+
+### Sheets 对象常用的方法
+```python
+wb.Worksheets.Add().Name = 'sheet1'                 # 新建工作表sheet1
+ws = xls.Sheets(1)=== wb.Worksheets('Sheet1')       # 选择工作表-默认Sheet1
+ws.Activate()                                       # 激活当前工作表
+ws.Shapes.AddPicture(picturename, 1, 1, Left, Top, Width, Height) # 添加图片到Sheet 页面中
+
+sheets = wb.Worksheets
+ws = shts(1).Copy(None, sheets(1)) 
+```
+
+## Range/Cell
+Range 表示 excel sheet 中的一个区域，通常 Range 由一个左上角的起始 Cell 和 右下角的结束 Cell 表示。
+Cell 是组成 Range 的元对象
+
+```python
+# 访问一个 Cell
+ws.Cells(1,1) 
+
+# 访问某个区域
+wr = ws.Range("B5:C10")     
+wr = ws.Range(ws.Cells(2,2), ws.Cells(3,8))
+
+# 获取使用区域的行列数量
+row_count = ws.UsedRange.Rows.Count
+col_count = ws.UsedRange.Columns.Count
+
+# 获取所有数据
+list(ws.Range(ws.Cells(1,2), ws.Cells(row,col)).Value)
+
+# 向Excel单元格中写入数据
+wr.Value = 1
+wr.Value = list[[1, 2, 3, 4, 5, 6], [2, 3, 4, 5, 6, 7]]
+
+ws.Cells(2, 1).Value = 3
+ws.Cells(1, 1).Value = None
+ws.Cells(11, 5).offset(3,2).Value = 1
+
+ws.Range('D' + str(10)).value = 3.14                 # 第十行
+ws.Range('A1').Value = 'Win32com On Excel'
+
+ws.Range('A2:F2').Value = list('abcDeF')
+ws.Range(ws.Cells(3,1),ws.Cells(3,6)).Value = tuple(range(6))
+```
