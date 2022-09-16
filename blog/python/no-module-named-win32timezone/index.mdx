@@ -1,0 +1,21 @@
+---
+title: "no-module-named-win32timezone"
+date: "2022-09-16"
+tags: ["python", "error"]
+---
+
+使用 pywin32 处理 Excel 的一些操作时，在应用使用 pyinstaller 打包后，使用应用访问带有日期的 Excel 的时候，就会遇到这样的报错：
+
+- `No module named 'win32timezone'`
+
+但是项目代码中没有用到 win32timezone 这个库，那么大概率是因为没有导入，打包时丢失了这个模块。
+
+通过在打包时添加 `hiddenimport` 选项解决这个问题：
+
+- `pyinstaller --hiddenimport win32timezone -F xxx.py`
+
+
+
+##### 参考：
+- [ImportError: No module named win32timezone...](https://stackoverflow.com/questions/33212949/importerror-no-module-named-win32timezone-when-i-make-a-singleone-exe-from-a-py)
+- [用Pyinstaller打包时遇到No module named win32timezone问题](https://blog.csdn.net/u014292858/article/details/88531597)
