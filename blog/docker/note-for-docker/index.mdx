@@ -7,6 +7,8 @@ embeddedImagesLocal:
   - ./docker_intro.png
 ---
 
+import { getImage, GatsbyImage } from 'gatsby-plugin-image';
+
 ## 我为什么写这篇文章？
 
 记录基础的 docker 介绍和使用方式。
@@ -72,8 +74,6 @@ embeddedImagesLocal:
   - 重启 docker 服务        `service docker restart`
   - 关闭 docker 服务        `service docker stop`
 
-
-> **高级复制：**
 
 <GatsbyImage alt='docker intro' image={getImage(props.localImages[0])} title='docker intro'/>
 
