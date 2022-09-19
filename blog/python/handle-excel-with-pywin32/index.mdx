@@ -111,6 +111,7 @@ Range 表示 excel sheet 中的一个区域，通常 Range 由一个左上角的
 Cell 是组成 Range 的元对象
 
 ```python
+import win32com.client as c
 # 访问一个 Cell
 ws.Cells(1,1) 
 
@@ -118,9 +119,17 @@ ws.Cells(1,1)
 wr = ws.Range("B5:C10")     
 wr = ws.Range(ws.Cells(2,2), ws.Cells(3,8))
 
-# 获取使用区域的行列数量
-row_count = ws.UsedRange.Rows.Count
-col_count = ws.UsedRange.Columns.Count
+# 获取使用区域的行列数量，其中 used.Row 表示区域开始的 行号， used.Rows.Count 表示一共多少行，列同理
+used = ws.UsedRange
+nrows = used.Row + used.Rows.Count - 1
+ncols = used.Column + used.Columns.Count - 1
+
+# TODO 这里遇到过一个奇怪的问题，就是used.Columns.Count 异常，测试电脑上为 1024（奇怪 🧐）
+
+
+# 这个方法可以检查出某一行使用的 column 数量
+row_count = ws.Cells(1, ws.Columns.Count).End(c.xlToLeft).Column
+
 
 # 获取所有数据
 list(ws.Range(ws.Cells(1,2), ws.Cells(row,col)).Value)
