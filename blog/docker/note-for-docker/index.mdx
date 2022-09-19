@@ -1,0 +1,124 @@
+---
+title: "note-for-docker"
+date: "2022-09-19"
+tags: ["docker"]
+
+embeddedImagesLocal:
+  - ./docker_intro.png
+---
+
+import { getImage, GatsbyImage } from 'gatsby-plugin-image';
+
+## 我为什么写这篇文章？
+
+记录基础的 docker 介绍和使用方式。
+
+## 这篇文章对谁有用？
+
+初入 docker 使用者。（主要是之后供自己查阅）
+
+## 有什么用？
+
+了解 docker，以及基础的 docker 使用方式
+
+## 正文
+
+### Docker 的用途
+
+- **提供一次性的环境。** 比如，本地测试他人的软件、持续集成的时候提供单元测试和构建的环境。
+- **提供弹性的云服务。** 因为 Docker 容器可以随开随关，很适合动态扩容和缩容。
+- **组建微服务架构。** 通过多个容器，一台机器可以跑多个服务，因此在本机就可以模拟出微服务架构。
+
+### 基础概念
+- **镜像（Image）：** Docker 镜像（Image），就相当于是一个 root 文件系统。比如官方镜像 ubuntu:16.04 就包含了完整的一套 Ubuntu16.04 最小系统的 root 文件系统。
+- **容器（Container）：** 镜像（Image）和容器（Container）的关系，就像是面向对象程序设计中的类和实例一样，镜像是静态的定义，容器是镜像运行时的实体。容器可以被创建、启动、停止、删除、暂停等。
+- **仓库（Repository）：** 仓库可看成一个代码控制中心，用来保存镜像。
+
+
+### 常用命令
+- **镜像 image**
+  - 检索镜像        `docker search`
+  - 获取镜像        `docker pull`/`docker image pull`
+  - 列出本地镜像    `docker images`/`docker images ls`
+  - 删除镜像        `docker rmi`/`docker images rm`
+  - 导出镜像        `docker save`
+  - 导入镜像        `docker load`
+  - 镜像制作
+    - 构建镜像      `docker build`
+    - 运行          `docker run`
+    - DOCKER FILE 常用命令
+      - 指定基础镜像    `FROM`
+      - 复制文件        `COPY`
+      - 高级复制*       `ADD`
+      - 容器启动命令    `CMD`
+      - 执行命令        `RUN`
+      - 环境变量        `ENV`
+      - 暴露端口        `EXPOSE`
+- **容器**
+  - 创建并启动容器   `docker run`
+  - 启动容器        `docker start`
+  - 查看容器        `docker ps`
+  - 终止容器        `docker stop`
+  - 重启容器        `docker restart`
+  - 进入容器        `docker exec`/`docker attach`
+  - 导出容器        `docker export`
+  - 导入容器快照    `docker import`
+  - 删除容器        `docker rm`
+  - 查看容器日志    `docker logs`
+- **服务**
+  - 查看 docker 版本信息    `docker version`
+  - 查看 docker 简要信息    `docker -v`
+  - 启动 docker             `systemctl start docker`
+  - 关闭 docker             `systemctl stop docker`
+  - 设置开机启动            `systemctl enable docker`
+  - 重启 docker 服务        `service docker restart`
+  - 关闭 docker 服务        `service docker stop`
+
+
+<GatsbyImage alt='docker intro' image={getImage(props.localImages[0])} title='docker intro'/>
+
+### image 文件
+
+**Docker 把应用程序及其依赖，打包在 image 文件里面。** 
+- image 是二进制文件。实际开发中，一个 image 文件往往通过继承另一个 image 文件，加上一些个性化设置而生成。
+- image 文件是通用的，一台机器的 image 文件拷贝到另一台机器，照样可以使用。
+- 为了方便共享，image 文件制作完成后，可以上传到网上的仓库。
+
+#### image 常用命令
+```bash
+$ docker image [COMMAND]
+
+# 使用 docker image [COMMAND] --help 查看具体命令
+$ docker image [COMMAND] --help
+```
+
+COMMAND: 
+- **build**        Build an image from a Dockerfile
+- **history**      Show the history of an image
+- **import**       Import the contents from a tarball to create a filesystem image
+- **inspect**      Display detailed information on one or more images
+- **load**         Load an image from a tar archive or STDIN
+- **ls**           List images
+- **prune**        Remove unused images
+- **pull**         Pull an image or a repository from a registry
+- **push**         Push an image or a repository to a registry
+- **rm**           Remove one or more images
+- **save**         Save one or more images to a tar archive (streamed to STDOUT by default)
+- **tag**          Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+
+
+```bash
+# 列出本机所有的 image 文件
+$ docker image ls
+
+# 删除 image 文件
+$ docker image rm [imageName]
+
+#  从仓库拉取 image 文件，其中 group 是 image 所在的组， imageName 是 image 文件名字
+$ docker image pull [[group]/[imageName]]
+
+# 搜索 image
+$ docker image search
+```
+
+
