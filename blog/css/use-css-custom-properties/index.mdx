@@ -1,0 +1,110 @@
+---
+title: "use-css-custom-properties"
+date: "2022-09-20"
+tags: ["css"]
+---
+
+## 定义 CSS 变量  
+css 变必须常定义在 `{}` 块内，所以通常的是定义在根伪类 `:root` 下，这样就可以在HTML文档的任何地方访问到它了：
+
+```css
+:root {
+  --main-bg-color: brown;
+}
+
+body {
+  background-color: var(--main-bg-color);
+}
+```
+
+## CSS 变量也有作用域的概念（或者说权重）
+
+权重越高的定义会覆盖其他的定义出来的变量，比如：
+
+```html
+<style>
+  :root { --color: brown; }
+  #card { --color: blue; }
+
+  div { color: var(--color); }
+</style>
+
+<div>这里会是棕色的，是 :root 的效果 </div>
+<div id="card">这里会是蓝色的，是 #card 的效果 </div>
+```
+
+## 当浏览器遇到无效 `var()` 时，会使用继承值或初始值代替。
+如果使用的自定义属性没有对应的值，为了避免这种情况，可以使用默认值：
+
+```css
+.red {
+  color: var(--red-color, red); /* --red-color is not defined */
+}
+```
+
+当提供的自定义变量无效时，不会使用默认值，而是使用继承值：
+```css
+.red {
+  --my-size: 20px;
+  color: var(--my-size, red); /* --my-size 不是 color 期待的值，所以这里会使用继承过来的 transparent */
+}
+```
+
+
+## CSS 变量中可以使用其他的 CSS 变量
+```css
+.box {
+  --columns: 4;
+  --margin: calc(24px / var(--columns));
+  --space: calc(4px / var(--columns));
+  --fontSize: calc(20px - 4 / var(--columns));
+}
+
+@media screen and (max-width: 1200px) {
+  .box {
+    --columns: 3;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .box {
+    --columns: 2;
+  }
+}
+
+@media screen and (max-width: 600px) {
+    .box {
+        --columns: 1;
+    }
+}
+```
+
+上述代码例子中，只需要改变 `--columns` 这一个变量即可改变其他大量css属性，而不要一一定义。
+
+
+## 在 JS 中设置和使用 CSS 变量
+
+在 HTMl 中，预先定义使用某个css 变量，后期更具需要或者响应设置对应值：
+```html
+<div id="box">
+  <img src="shui-ren-bo-gao.jpg" style="border: 10px solid var(--color);">
+</div>
+```
+
+如上，如果需要让 `var(--color)` 生效：
+```JS
+box.style.setProperty('--color', 'purple');
+```
+
+如果需要获取 CSS 变量，可以通过：
+```JS
+var cssvar = getComputedStyle(box).getPropertyValue('--color');
+
+console.log('cssvar -->', cssvar);
+// cssvar --> purple
+```
+
+
+## 参考
+- [使用 CSS 自定义属性（变量）](https://developer.mozilla.org/zh-CN/docs/Web/CSS/Using_CSS_custom_properties)
+- [小tips:了解CSS变量var](https://www.zhangxinxu.com/wordpress/2016/11/css-css3-variables-var/)
