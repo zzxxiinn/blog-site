@@ -29,9 +29,12 @@ jobs:
         username: zhangxin8344
         password: ${{ secrets.DOCKER_LOGIN_TOKEN }}
 
+    - name: Slim fonts
+      run: npm run gen-slim-fonts
+
     - name: Build the Docker image
       run: bash ./build_push.sh
-      
+
     - name: Trigger Webhook
       uses: joelwmale/webhook-action@2.1.0
       with:
