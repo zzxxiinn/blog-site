@@ -92,12 +92,12 @@ body {
 ```
 
 如上，如果需要让 `var(--color)` 生效：
-```JS
+```javascript
 box.style.setProperty('--color', 'purple');
 ```
 
 如果需要获取 CSS 变量，可以通过：
-```JS
+```javascript
 var cssvar = getComputedStyle(box).getPropertyValue('--color');
 
 console.log('cssvar -->', cssvar);
