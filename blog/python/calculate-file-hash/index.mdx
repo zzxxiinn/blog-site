@@ -1,0 +1,68 @@
+---
+title: "calculate-file-hash-with-python"
+date: "2022-09-23"
+tags: ["python", "hash"]
+---
+
+通常的，可以通过 MD5、SHA1、SHA256 计算文件的完整性。
+
+- 对于用户上传的文件，如果计算文件的 hash 后再做相关处理，可以减少过多的重复文件的存储问题。
+- 对于提供给用户的文件下载，可以避免第三方的内容篡改，导致文件无法使用。
+
+而对于不同大小的文件，计算 hash 的方式也不一样。
+
+如果处理字符串：
+```python
+import hashlib
+
+for algorithm in ('md5', 'sha1', 'sha256'):
+    print(algorithm, hashlib.new(algorithm, 'helloworld'.encode(encoding="utf-8")))
+
+# md5 fc5e038d38a57032085441e7fe7010b0
+# sha1 6adfb183a4a2c94a2f92dab5ade762a47889a5a1
+# sha256 936a185caaa266bb9cbe981e9e05cb78cd732b0b3280eb944412bb6f8f8f07af
+```
+
+
+对于文件大小小于 500MB 的文件，可以直接读取其二进制内容，然后计算：
+```python
+import hashlib
+from pathlib import Path
+from typing import Union
+
+
+def encrypt(file_path: Union(str, Path), algorithm: str):
+    with open(file_path, 'rb') as f:
+        return hashlib.new(algorithm, f.read()).hexdigest()
+
+
+if __name__ == '__main__':
+    for algorithm in ('md5', 'sha1', 'sha256'):
+        hexdigest = encrypt(file_path='test.txt', algorithm=algorithm)
+        print(f'{algorithm}: {hexdigest}')
+```
+
+
+如果文件稍微大一些，为了避免内存溢出，推荐使用按块读取计算，并使用 `rich` 包提供一个友好的进度提示：
+
+```python
+import hashlib
+from pathlib import Path
+from typing import Union
+
+import rich.progress
+
+
+def encrypt(file_path: Union(str, Path), algorithm: str) -> str:
+    with rich.progress.open(file_path, 'rb') as f:
+        hash = hashlib.new(algorithm)
+        for chunk in iter(lambda: f.read(2**20), b''):
+            hash.update(chunk)
+    return hash.hexdigest()
+
+
+if __name__ == '__main__':
+    for algorithm in ('md5', 'sha1', 'sha256'):
+        hexdigest = encrypt('bigfile', algorithm)
+        print(f'{algorithm}: {hexdigest}')
+```
