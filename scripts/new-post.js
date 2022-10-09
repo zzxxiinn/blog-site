@@ -6,7 +6,7 @@ const fs = require("fs-extra");
 const dayjs = require("dayjs");
 
 const blogPath = path.join(__dirname, "..", "blog");
-const filenameReg = new RegExp("^[0-9a-zA-Z-_]+$");
+const filenameReg = new RegExp("^[0-9a-zA-Z-_ ]+$");
 
 const NEW_TYPE = "+ Create new type";
 
@@ -85,12 +85,12 @@ function addNewType() {
         validate(value) {
           return (
             filenameReg.test(value) ||
-            "Post name does not match reg: ^[0-9a-zA-Z-_]+$"
+            "Post name does not match reg: ^[0-9a-z-_]+$"
           );
         },
       },
     ])
-    .then(({ type }) => addNewPost(type));
+    .then(({ type }) => addNewPost(type.toLowerCase()));
 }
 
 function addNewPost(type) {
@@ -106,13 +106,13 @@ function addNewPost(type) {
           }
           return (
             filenameReg.test(value) ||
-            "Post name does not match reg: ^[0-9a-zA-Z-_]+$"
+            "Post name does not match reg: ^[0-9a-zA-Z-_ ]+$"
           );
         },
       },
     ])
     .then(({ name }) => {
-      createPostTemplate(type, name);
+      createPostTemplate(type, name.replace(/\s/g, '-').toLowerCase());
     });
 }
 
