@@ -38,11 +38,11 @@ tags: ["adobe"]
 
 #### 额外要注意的
 1. 当 Premiere (2022) 崩溃后如果您想启动它，请在终端应用程序中运行以下命令：
-    ```bash
-    sudo codesign --force --deep --sign - /Applications/Adobe\ Premiere\ Pro\ 2022/Adobe\ Premiere\ Pro\ 2022.app
-    ```
+```bash
+sudo codesign --force --deep --sign - /Applications/Adobe\ Premiere\ Pro\ 2022/Adobe\ Premiere\ Pro\ 2022.app
+```
 
 2. 如果安装程序显示“它已损坏，需要重新下载”，请在终端应用程序中运行以下命令：
-    ```bash
-    sudo spctl --master-disable
-    ```
+```bash
+sudo spctl --master-disable
+```
