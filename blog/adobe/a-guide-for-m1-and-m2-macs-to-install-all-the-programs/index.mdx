@@ -4,68 +4,45 @@ date: "2022-10-10"
 tags: ["adobe"]
 ---
 
-https://www.reddit.com/r/AdobeZii/comments/wt1qls/a_guide_for_m1_m2_macs_to_install_all_the_programs/
+[参考（reddit）](https://www.reddit.com/r/AdobeZii/comments/wt1qls/a_guide_for_m1_m2_macs_to_install_all_the_programs/)
+
+在我参考了多个此 subreddit 的文章，并且只有部分方法取得成功后，我决定写这个指南来帮助你们基于 M1 和 M2 芯片上的 Monterey 系统安装 Adobe 相关的软件。
+
+**如果需要视屏教学，博主录了个操作视频上传到 GoogleDrive 上** [点我观看](https://drive.google.com/file/d/1LwQoFgDcPzUrrM9coK8V8N8VWalouc1J/view?usp=sharing)
+
+1. 从官方下载并安装最新的 Creative Cloud 应用 [下载链接](https://helpx.adobe.com/download-install/kb/creative-cloud-desktop-app-download.html)
+2. 使用 CC 账户登陆 Creative Cloud 应用。
+3. 登陆 Creative Cloud 应用后，在设置页面中关闭自动更新所有应用以及更新 CC 本身。
+4. 彻底关闭 Creative Cloud 应用（通常是 Command + Q 退出程序）。
+5. 去 [Cmacked](https://apps.cmacked.com/) 网站下载你需要的应用。
+6. 打开第5步下载好了的 .dmg 文件。
+7. 您会看到各种可供选择的选项，首先双击 AntiCC 并安装它。
+8. 然后返回打开第6步中你想要安装的应用的 .dmg 文件。
+9. 在这里你看到安装程序（白色图标，adobe图标倒置）->双击它，如果它不起作用，请右键单击并单击“打开”（我们将让MacOS安装Rosetta，因此需要互联网访问！）
+10. 它将要求您安装 Rosetta 以打开该程序。单击接受并安装（必须访问 Internet）
+
+**您现在完成了安装任何程序的要求设置。以后的安装从这里开始，因为您只需要安装一次 AntiCC**
+
+11. 您现在可以右键单击“显示包内容”。导航到 Contents > MacOS 并右键单击打开“安装”文件。安装程序现在应该可以毫无问题地打开。
+12. 输入您的密码并让它安装在 **默认目录** 中。
+13. 返回到找到补丁 (.pgk) 文件的起点。
+14. 右键打开，输入密码后安装。
+15. 到这里结束，该软件现已激活，并可以使用。
+16. 如果出现弹出窗口提示您输入密码以访问 **KEYCHAIN ACCESS**，请单击 **“拒绝”** 以使其停止显示弹出窗口，请继续阅读本指南的“修复弹出问题”部分
 
 
+#### 修复弹出问题
+1. 转到“钥匙串访问”应用程序并在“登录”（左侧）选项卡下右上角搜索“Adobe”；
+2. 现在删除每个黄色的 “像便签条一样” 的条目；
 
-After all I’ve read at this subreddit and my own tries only partly succeeded I decided to write this guide to help you guys with what worked for me. This works for M1 & M2 chips on latest Monterey update. If you run into any problem, let me know in the comments!
 
-If you want the guide as a video, I actually created one. Watch
+#### 额外要注意的
+1. 当 Premiere (2022) 崩溃后如果您想启动它，请在终端应用程序中运行以下命令：
+    ```bash
+    sudo codesign --force --deep --sign - /Applications/Adobe\ Premiere\ Pro\ 2022/Adobe\ Premiere\ Pro\ 2022.app
+    ```
 
-Download the Creative Cloud App and install it Download
-
-Login with a CC Account. If you dont have one, create one and login afterwards
-
-After you reached the homepage, go into settings and disable auto-updates for the apps and the launcher itself
-
-Close the launcher completely
-
-Go to cmacked’s website and download the apps you want.
-
-Open the .dmg file of the program you want to install
-
-You see various options to choose from -> Click on AntiCC first and install it
-
-After that, go back and open the .dmg file of the app
-
-Here you see the installer (white icon with adobe Icon upside down) -> double click it, if it doesn’t work, right click and click „open“ (We’re going to let MacOS install Rosetta, so internet access is required!)
-
-It will ask you to install Rosetta in order to open the program. Click accept and let it install (internet access is mandatory)
-
-You now did the setup of the requirements to install any programs. Future installations start from here, since you only need to install AntiCC once!
-
-11. You can now right-click then “Show package contents”. Navigate to Contents > MacOS and right click open the “install” file. The installer should now open without a problem.
-
-12. Enter your password and let it install in the default directory
-
-13. Go back to the start where you find the patch (.pgk) file
-
-14. Right-click open it and let it install after entering the password
-
-15. And that’s it. The software is now activated and can be used
-
-16. If a pop-up appears prompting you to insert your password to access KEYCHAIN ACCESS THEN CLICK “DENY” to make it stop showing the pop up keep reading the “Fix Pop-Up Problem” section of this guide
-
-FIX POP-UP PROBLEM
-
-17. Go to the “Keychain Access” app and under the tab “Login” (left side) search for ”Adobe” in the top right corner
-
-18. Now delete every yellow “sticky note-like” entries
-
-ADDITIONALLY
-
-If Premiere (2022) crashes if you want to start it, run this command in the Terminal app:
-
-sudo codesign --force --deep --sign - /Applications/Adobe\ Premiere\ Pro\ 2022/Adobe\ Premiere\ Pro\ 2022.app
-
-Thanks u/shiftym21 for letting me know!
-
-2. If the installer says “It is damaged and needs to get downloaded again”, run this command in the Terminal app:
-
-sudo spctl —master-disable
-
-Thank you u/Jumpy-Ad1813 for letting me know!
-
-NOTES
-
-Like I said I don’t recommend opening the CC Launcher ever again but apparently you can do it to for example install fonts or Camera RAW for Photoshop. Do it at your own risk!
+2. 如果安装程序显示“它已损坏，需要重新下载”，请在终端应用程序中运行以下命令：
+    ```bash
+    sudo spctl --master-disable
+    ```
