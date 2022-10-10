@@ -1,0 +1,71 @@
+---
+title: "A Guide for M1 & M2 Macs to install all the programs"
+date: "2022-10-10"
+tags: ["adobe"]
+---
+
+https://www.reddit.com/r/AdobeZii/comments/wt1qls/a_guide_for_m1_m2_macs_to_install_all_the_programs/
+
+
+
+After all I’ve read at this subreddit and my own tries only partly succeeded I decided to write this guide to help you guys with what worked for me. This works for M1 & M2 chips on latest Monterey update. If you run into any problem, let me know in the comments!
+
+If you want the guide as a video, I actually created one. Watch
+
+Download the Creative Cloud App and install it Download
+
+Login with a CC Account. If you dont have one, create one and login afterwards
+
+After you reached the homepage, go into settings and disable auto-updates for the apps and the launcher itself
+
+Close the launcher completely
+
+Go to cmacked’s website and download the apps you want.
+
+Open the .dmg file of the program you want to install
+
+You see various options to choose from -> Click on AntiCC first and install it
+
+After that, go back and open the .dmg file of the app
+
+Here you see the installer (white icon with adobe Icon upside down) -> double click it, if it doesn’t work, right click and click „open“ (We’re going to let MacOS install Rosetta, so internet access is required!)
+
+It will ask you to install Rosetta in order to open the program. Click accept and let it install (internet access is mandatory)
+
+You now did the setup of the requirements to install any programs. Future installations start from here, since you only need to install AntiCC once!
+
+11. You can now right-click then “Show package contents”. Navigate to Contents > MacOS and right click open the “install” file. The installer should now open without a problem.
+
+12. Enter your password and let it install in the default directory
+
+13. Go back to the start where you find the patch (.pgk) file
+
+14. Right-click open it and let it install after entering the password
+
+15. And that’s it. The software is now activated and can be used
+
+16. If a pop-up appears prompting you to insert your password to access KEYCHAIN ACCESS THEN CLICK “DENY” to make it stop showing the pop up keep reading the “Fix Pop-Up Problem” section of this guide
+
+FIX POP-UP PROBLEM
+
+17. Go to the “Keychain Access” app and under the tab “Login” (left side) search for ”Adobe” in the top right corner
+
+18. Now delete every yellow “sticky note-like” entries
+
+ADDITIONALLY
+
+If Premiere (2022) crashes if you want to start it, run this command in the Terminal app:
+
+sudo codesign --force --deep --sign - /Applications/Adobe\ Premiere\ Pro\ 2022/Adobe\ Premiere\ Pro\ 2022.app
+
+Thanks u/shiftym21 for letting me know!
+
+2. If the installer says “It is damaged and needs to get downloaded again”, run this command in the Terminal app:
+
+sudo spctl —master-disable
+
+Thank you u/Jumpy-Ad1813 for letting me know!
+
+NOTES
+
+Like I said I don’t recommend opening the CC Launcher ever again but apparently you can do it to for example install fonts or Camera RAW for Photoshop. Do it at your own risk!
