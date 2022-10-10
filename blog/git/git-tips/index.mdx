@@ -1,0 +1,49 @@
+---
+title: "Git 小提示"
+date: "2022-10-10"
+tags: ["git"]
+---
+
+## 这篇文章讲什么？
+收集开发中遇到的一些 Git 相关的问题和解决方案。
+
+## 这篇文章对谁有用？
+开发过程中使用 Git 作为分支管理和代码仓库的开发者。
+
+## 问题： Git区分文件名大小写
+之前是知道 git 可以设置对文件名称大小写是否敏感的。但是一直没有遇到这方面的问题，直到写 blog 时规范 category 目录时，本地开发预览效果和 CI 线上效果就是不一样（路径404）。
+
+为了处理这个问题，需要仓库设置忽略大小写为 `false`：
+
+```bash
+git config core.ignorecase false
+```
+
+当然，如果想要对 **全局设置** ：
+
+```bash
+git config --global core.ignorecase false
+```
+
+这时候如果遇到 `顽固污渍`，可以删除相关文件（或者**所有**）的提交缓存，然后再提交：
+
+```bash
+git rm -r --cached <Your-File>
+
+git commit -a -m "xx"
+git push --force
+```
+
+
+## 问题：不同系统提交，所有文件权限变动
+在不同系统上协作编程，有时候会遇到明明什么都没改，但是所有的文件都变动了，看改动内容都是空白，这大概是文件的权限变动了。
+
+通常情况为了避免这个问题，只要让 Git 忽略文件权限变更：
+
+```bash
+git config core.filemode false
+
+git rm -r --cached .
+git commit -a -m "xx"
+git push
+```
