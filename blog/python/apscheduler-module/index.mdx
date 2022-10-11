@@ -1,0 +1,207 @@
+---
+title: "APScheduler 定时任务模块"
+date: "2022-10-11"
+tags: ["python"]
+embeddedImagesLocal:
+  - ./image_1.png
+  - ./image_2.png
+---
+
+import {getImage, GatsbyImage} from 'gatsby-plugin-image';
+
+话不多说，这几天研究下来 APScheduler 应该是 python 最好用的定时任务的包了。
+
+### 安装
+
+```bash
+$ pip install apscheduler
+```
+
+<br/>
+
+### 简单的例子
+
+下面的例子会演示在一个线程池中每3秒执行一次任务：
+```python
+from datetime import datetime
+import os
+
+from apscheduler.schedulers.blocking import BlockingScheduler
+
+
+def tick():
+    print('Tick! The time is: %s' % datetime.now())
+
+
+if __name__ == '__main__':
+    scheduler = BlockingScheduler()
+    scheduler.add_executor('processpool')
+    scheduler.add_job(tick, 'interval', seconds=3)
+    print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
+
+    try:
+        scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        pass
+```
+
+执行这段代码，将会输出:
+
+```text
+Press Ctrl+C to exit
+Tick! The time is: 2022-10-11 21:27:51.894717
+Tick! The time is: 2022-10-11 21:27:54.812072
+Tick! The time is: 2022-10-11 21:27:57.808894
+Tick! The time is: 2022-10-11 21:28:00.799781
+Tick! The time is: 2022-10-11 21:28:03.805877
+```
+
+<br/>
+
+### 四个基本概念
+APScheduler 分四个不同功能的基本模块
+
+**trigger（触发器）**
+
+触发器包含调度逻辑。每个 Job 都有自己的触发器，用于确定下一次运 Job 业的时间。除了初始配置之外，触发器是完全无状态的。
+
+**job stores（任务仓库）**
+
+Job Stores 存储已计划的 Job。默认 Job Store 只是将 Job 保存在内存中，但其他 Job 存储将它们存储在各种数据库中。Job 的数据在保存到持久 Job 存储时被序列化，并在从它加载回来时被反序列化。Job Stores（默认存储除外）不会将 Job 数据保存在内存中，而是充当中间人，用于在后端保存、加载、更新和搜索 Job。Job Stores 绝不应该在调度程序之间共享。<br />
+
+任务存储器有两种，一种是内存（默认），一种是数据库持久存储。使用内存的方式是简单高效，但是不好的是，一旦程序出现问题，重新运行的话，会把之前已经执行了的任务重新执行一遍。数据库则可以在程序崩溃后，重新运行可以从之前中断的地方恢复正常运行。 <br />
+
+**executors（执行器）**
+
+Executors 负责处理 Job 的运行。他们通常通过将 Job 中指定的可调用对象提交到线程或进程池来执行此操作。Job 完成后，Executors 会通知调度程序，然后调度程序会发出适当的事件。
+
+**schedulers（调度器）**
+
+调度器将其余部分绑定在一起。您的应用程序中通常只运行一个调度程序。应用程序开发人员通常不直接处理 任务仓库、执行器或触发器。相反，调度程序提供了适当的接口来处理所有这些。配置任务仓库和执行器是通过调度器完成的，添加、修改和删除任务也是如此。
+
+<br/>
+他们的分工逻辑如下：
+
+<GatsbyImage alt='apscheduler' image={getImage(props.localImages[0])} title='apscheduler'/>
+
+
+#### 触发器
+触发器按照使用场景不同，分为三种
+
+##### 1. [date trigger](https://apscheduler.readthedocs.io/en/stable/modules/triggers/date.html)
+当你想在某个特定的日期时间运行一次任务 xxxx年xx月xx日 xx:xx:xx
+
+```python
+# 任务将在2009年11月6日开始执行
+sched.add_job(my_job, 'date', run_date=date(2009, 11, 6), args=['text'])
+
+# 任务将在 2009年11月6日16:30:05 开始执行
+sched.add_job(my_job, 'date', run_date=datetime(2009, 11, 6, 16, 30, 5), args=['text'])
+
+# 执行日期也可以使用字符串表示
+sched.add_job(my_job, 'date', run_date='2009-11-06 16:30:05', args=['text'])
+
+# 不传执行日期当然是立即执行！
+sched.add_job(my_job, args=['text'])
+```
+
+
+##### 2. [interval trigger](https://apscheduler.readthedocs.io/en/stable/modules/triggers/interval.html)
+当你想以固定的时间间隔运行任务，你可以设定开始和结束时间
+
+```python
+# 每两小时执行一次 job_function
+sched.add_job(job_function, 'interval', hours=2)
+
+# 任务在 2010-10-10 at 9:30 开始并在 2014-06-15 at 11:00 结束
+sched.add_job(job_function, 'interval', hours=2, start_date='2010-10-10 09:30:00', end_date='2014-06-15 11:00:00')
+```
+
+
+##### 3. [cron trigger](https://apscheduler.readthedocs.io/en/stable/modules/triggers/cron.html)
+功能最强大，配置也最复杂的触发器： cron 触发器！和 crontab 配置类似
+
+当你想在一天中的特定时间定期运行任务时使用
+
+| arg         | desc                                                |
+|-------------|-----------------------------------------------------|
+| year        | 4位数字的年份                                             |
+| month       | 1-12月份                                              |
+| day         | 1-31日                                               |
+| day_of_week | 一个礼拜中的第几天（ 0-6或者 mon、 tue、 wed、 thu、 fri、 sat、 sun） |
+| hour        | 0-23小时                                              |
+| minute      | 0-59分钟                                              |
+| second      | 0-59秒                                               |
+| start_date  | datetime类型或者字符串类型，起始时间                              |
+| end_date    | datetime类型或者字符串类型，结束时间                              |
+| timezone    | 时区                                                  |
+| jitter      | 任务触发的误差时间                                           |
+
+
+然后其中每个参数都可以参照下表，去设置复杂值：
+
+| 表达式    | 字段  | 描述                   |
+|--------|-----|----------------------|
+| *      | 任何  | 每个值都触发               |
+| */a    | 任何  | 每隔a时间触发              |
+| a-b    | 任何  | 在 a 和 b 区间中的所有值都触发   |
+| a-b/c  | 任何  | 在 a 和 b 区间中每隔 c 触发一次 |
+| xth y  | day | 第 x 星期的 y 触发         |
+| last x | day | 最后一个星期 x 触发          |
+| last   | day | 一个月中的最后一天触发          |
+| x,y,z  | 任何  | 可以将上面的表达式组合使用        |
+<br />
+
+比如这样使用：
+
+```python
+# 在6、7、8、11、12月的第三个周五的 0点 1点 2点和3点均执行一次
+sched.add_job(job_function, 'cron', month='6-8,11-12', day='3rd fri', hour='0-3')
+
+# 从周一到周五的 5:30(am) 执行一次，一直到 2014年的5月30日结束
+sched.add_job(job_function, 'cron', day_of_week='mon-fri', hour=5, minute=30, end_date='2014-05-30')
+```
+
+<br />
+如果你是一个 crontab 高手，你也可以使用 crontab 语法：
+
+```python
+sched.add_job(job_function, CronTrigger.from_crontab('0 0 1-15 may-aug *'))
+```
+#### 执行器
+通常默认的 ThreadPoolExecutor已经在大部分情况下是可以满足我们需求的。如果我们的任务涉及到一些 CPU密集计算的操作。那么应该考虑 ProcessPoolExecutor。
+
+**执行器类别**
+
+- ThreadPoolExecutor：线程池执行器。
+- ProcessPoolExecutor：进程池执行器。
+- GeventExecutor： Gevent程序执行器。
+- TornadoExecutor： Tornado程序执行器。
+- TwistedExecutor： Twisted程序执行器。
+- AsyncIOExecutor： asyncio程序执行器。
+
+#### 任务仓库
+任务存储器有两种，一种是内存（默认），一种是数据库持久存储。使用内存的方式是简单高效，但是不好的是，一旦程序出现问题，重新运行的话，会把之前已经执行了的任务重新执行一遍。数据库则可以在程序崩溃后，重新运行可以从之前中断的地方恢复正常运行。
+
+- MemoryJobStore没有序列化，任务存储在内存中，增删改查都是在内存中完成。
+- SQLAlchemyJobStore使用 SQLAlchemy这个 ORM 框架结合 DB 存储作为存储方式。
+- MongoDBJobStore使用 mongodb作为存储器。
+- RedisJobStore使用 redis作为存储器。
+
+#### 调度器
+和执行器类别对应
+
+- **BlockingScheduler** 推荐在调度器是进程中唯一运行的程序时使用
+- **BackgroundScheduler** 推荐在不使用任何框架，并且希望调度器在应用程序后台执行时使用
+- **AsyncIOScheduler** 适用于当你的应用使用 asyncio 模块时
+- **GeventScheduler** 适用于当你的应用使用 gevent 应用
+- **TornadoScheduler** 适用于当你构建 Tornado 应用
+- **TwistedScheduler** 适用于当你构建 Twisted 应用
+- **QtScheduler** 适用于当你构建 Qt 应用
+
+
+
+
+> **参考** <br/>
+> [APScheduler](https://apscheduler.readthedocs.io/en/3.x/userguide.html)
+> [APScheduler定时任务框架](https://blog.csdn.net/yuanfate/article/details/119945735)
