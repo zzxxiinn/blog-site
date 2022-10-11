@@ -119,9 +119,28 @@ sched.add_job(job_function, 'interval', hours=2, start_date='2010-10-10 09:30:00
 
 
 ##### 3. [cron trigger](https://apscheduler.readthedocs.io/en/stable/modules/triggers/cron.html)
-功能最强大，配置也最复杂的触发器： cron 触发器！和 crontab 配置类似
+当你想在一天中的特定时间定期运行任务时使用，功能最强大，配置也最复杂的触发器： cron 触发器！和 crontab 配置类似。不过不一样的是，APScheduler 的cron 缺省参数默认为 *，举几个例子：
 
-当你想在一天中的特定时间定期运行任务时使用
+**day=1, minute=20**
+
+最小有效值字段为 minute 故等价于 year='*', month='*', day=1, week='*', day_of_week='*', hour='*', minute=20, second=0，意思是在每年每月 1 号每小时的 20 分 0 秒运行；
+
+**hour=1**
+
+最小有效值字段为 hour 故等价于 year='*', month='*', day=*, week='*', day_of_week='*', hour=1, minute=0, second=0，意思是在每年每月每天 1 点的 0 分 0 秒运行；
+
+**month=6, hour=1**
+
+最小有效值字段也为 hour 故等价于 year='*', month=6, day=*, week='*', day_of_week='*', hour=1, minute=0, second=0，意思是在每年 6 月每天 0 点 0 分 0 秒运行；
+
+**month=6**
+
+最小有效值字段也为 month 故等价于 year='*', month=6, day=1, week='*', day_of_week='*', hour=0, minute=0, second=0，意思是在每年 6 月 1号 0 点 0 分 0 秒运行；
+
+**year=2020**
+
+最小有效值字段也为 year 故等价于 year=2020, month=1, day=1, week='*', day_of_week='*', hour=0, minute=0, second=0，意思是在 2020 年 1 月 1 号 0 点 0 分 0 秒运行；
+
 
 | arg         | desc                                                |
 |-------------|-----------------------------------------------------|
@@ -198,6 +217,8 @@ sched.add_job(job_function, CronTrigger.from_crontab('0 0 1-15 may-aug *'))
 - **TornadoScheduler** 适用于当你构建 Tornado 应用
 - **TwistedScheduler** 适用于当你构建 Twisted 应用
 - **QtScheduler** 适用于当你构建 Qt 应用
+
+### 例子
 
 
 
