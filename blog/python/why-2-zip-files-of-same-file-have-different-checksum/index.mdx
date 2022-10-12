@@ -1,0 +1,54 @@
+---
+title: "同一文件的两次zip内容不一致"
+date: "2022-10-12"
+tags: ["python"]
+embeddedImagesLocal:
+  - ./image_011.jpg
+---
+
+import { getImage, GatsbyImage } from 'gatsby-plugin-image';
+
+对同一个文件夹进行两次zip压缩操作后，两个文件检查 sha256 却不一样（二进制内容不一样）！
+
+工作项目里，做了个模块打包上传到服务器的工具。工具会检查本地模块有没有改动，然后加密编码后上传到服务器。不过每次都将所有的模块都打包上传一遍着实很慢，于是就算模块文件的 sha256 存下来后续打包进行比较。
+
+然后就踩坑了：每次就算模块没有改动，算出来的 sha256 却是不一样，然后每次都全部给我来一遍 🤯
+
+Google 搜了搜，也有不少同学遇到一样的问题，原因是 zip 打包文件时，会将文件的 access time(atime) 保留在 zip 的二进制内容中，从而 zip 文件在内容上会有出入，导致 sha256 计算每次都不一样。
+
+然后就想了个比较 tricky 的方法：
+
+```python
+def zip_dir(src, output):
+    """
+    压缩指定文件夹
+    :param src: 目标文件夹路径
+    :param output: 压缩文件保存路径+xxxx.zip
+    :return: 无
+    """
+    zip_file = zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED)
+    utime = datetime.datetime.strptime("1999-01-01", '%Y-%m-%d').timestamp()
+
+    for p, dir_names, filenames in os.walk(src):
+        fpath = p.replace(str(src), "")
+
+        for filename in filenames:
+            source_filepath = os.path.join(p, filename)
+            os.utime(source_filepath, (utime, utime))
+            zip_file.write(source_filepath, os.path.join(fpath, filename))
+
+    zip_file.close()
+```
+
+在每次压缩时，统一文件的读取和修改时间！
+
+<GatsbyImage alt='meme001' image={getImage(props.localImages[0])} title='meme001'/>
+
+还好只是零时文件，不用考虑这个数据。不过不管黑猫白猫，能抓老鼠的就是好猫~
+
+
+
+#### 参考
+
+- [同一文件的两次 zip 内容不一致](https://adoyle.me/blog/why-zip-file-checksum-changed.html)
+- [zip two file with same content, but final md5sum is different](https://stackoverflow.com/questions/36323139/zip-two-file-with-same-content-but-final-md5sum-is-different)
