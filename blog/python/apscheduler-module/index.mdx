@@ -4,7 +4,6 @@ date: "2022-10-11"
 tags: ["python"]
 embeddedImagesLocal:
   - ./image_1.png
-  - ./image_2.png
 ---
 
 import {getImage, GatsbyImage} from 'gatsby-plugin-image';
@@ -179,6 +178,39 @@ sched.add_job(job_function, 'cron', month='6-8,11-12', day='3rd fri', hour='0-3'
 
 # 从周一到周五的 5:30(am) 执行一次，一直到 2014年的5月30日结束
 sched.add_job(job_function, 'cron', day_of_week='mon-fri', hour=5, minute=30, end_date='2014-05-30')
+
+# 每天 2 点运行
+sched.add_job(
+    job_function,
+    'cron',
+    hour=2
+)
+
+# 每天 2 点 30 分 5 秒运行
+sched.add_job(
+    job_function,
+    trigger='cron',
+    second=5,
+    minute=30,
+    hour=2,
+    args=['hello', 'world']
+)
+
+# 每 10 秒运行一次
+sched.add_job(
+    job_function,
+    trigger='cron',
+    second='*/10'
+)
+
+# 每天 1:00,2:00,3:00 运行
+sched.add_job(
+    job_function,
+    trigger='cron',
+    hour='1-3'
+)
+
+
 ```
 
 <br />
@@ -219,6 +251,69 @@ sched.add_job(job_function, CronTrigger.from_crontab('0 0 1-15 may-aug *'))
 - **QtScheduler** 适用于当你构建 Qt 应用
 
 ### 例子
+
+#### 删除 job
+当个调度器删除 job 时， 该 job 也将从 job store 中删除。
+
+你可以：
+- 使用 remove_job() 并提供 job_id 和 store 的名称
+- 通过 add_job() 的返回值 (apscheduler.job.Job) 实例的 remove() 方法
+
+```python
+job = sched.add_job(job_function, 'interval', minutes=2)
+job.remvoe()
+
+sched.add_job(job_function, 'interval', minutes=2, id="my_job_id")
+sched.remove_job('my_job_id')
+```
+
+#### 暂停和恢复 job
+
+```python
+job = sched.add_job(job_function, 'interval', minutes=2, id='my_job_id')
+job.pause()     # or
+sched.pause_job('my_job_id')
+
+job.resume()    # or
+sched.resume_job('my_job_id')
+```
+
+#### 获取和修改 job
+
+```python
+jobs = scheduler.get_jobs()
+job = scheduler.get_job(id)
+
+job.modify(max_instances=6, name='Alternate name')
+scheduler.reschedule_job('my_job_id', trigger='cron', minute='*/5')
+```
+
+也可以使用 add_job() 方法修改 job 信息，只需要指定参数 replace_existing=True 以及相同的 job_id 即可。
+
+#### 调度器的操作
+默认情况下，会关闭 job 存储和执行器，并等待所有正在执行的 job 完成。如果不想等待则可以使用以下方法关闭：
+
+```python
+# 关闭调度器
+cheduler.shutdown()
+
+# 关闭调度器并不等待当前正在执行的任务
+cheduler.shutdown(wait=False)
+
+
+# 暂停
+scheduler.pause()
+
+# 恢复
+scheduler.resume()
+```
+
+如果启动调度器的时候指定 paused=True，以这种方式启动的调度器直接就是暂停状态。
+```python
+scheduler.start(paused=True)
+```
+
+
 
 
 
