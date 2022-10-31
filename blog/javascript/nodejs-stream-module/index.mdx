@@ -1,0 +1,162 @@
+---
+title: "NodeJS Stream 模块"
+date: "2022-10-31"
+tags: ["javascript"]
+---
+
+
+### Stream 分类
+
+- `Readable`: 用来读取数据，比如 `fs.createReadStream()`。
+- `Writeable`: 用来写数据，比如 `fs.createWriteStream`。
+- `Duplex`: 可读 + 可写，比如 `net.Socket()`。
+- `Transform`: 在读写过程中，可以对数据进行修改，比如 `zlib.createDeflate()`（数据压缩、解压）。
+
+
+### Readable Stream
+
+以下是 nodejs 中常见的 Readable Stream：
+
+- http.IncomingRequest
+- fs.createReadStream()
+- process.stdin
+- 其他 ...
+
+例子一：
+```javascript
+const fs = require('fs');
+
+fs.readFile('./sample.txt', 'utf8', function(err, content) {
+  console.log('文件读取完成，内容是 [%s]', content);
+})
+```
+
+例子二：
+```javascript
+const fs = require('fs');
+
+const readStream = fs.createReadStream('./sample.txt');
+let content = '';
+
+readStream.setEncoding('utf-8');
+readStream.on('data', (chunk) => {
+  content += chunk
+});
+
+readStream.on('end', (chunk) => {
+  console.log('文件读取完成，内容是 [%s]', content);
+});
+```
+
+例子三：
+这里使用 `.pipe(dest)` 将内容输出到控制台，好处在于，如果源文件较大，占用内存不会很大。
+
+```javascript
+const fs = require('fs');
+
+fs.createReadStream('./sample.txt').pipe(process.stdout);
+```
+
+同样的也可以：
+
+```javascript
+const fs = require('fs');
+
+
+const onEnd = () => {
+  process.stdout.write(']')
+}
+
+const fileStream = fs.createReadStream('./sample.txt');
+fileStream.on('end', onEnd)
+fileStream.pipe(process.stdout);
+
+process.stdout.write('文件读取完成，文件内容是[')
+```
+
+
+### Writable Stream
+
+例子一：
+```javascript
+const fs = require('fs');
+const content = 'hello world';
+const filepath = './sample.txt';
+
+fs.writeFile(filepath, content);
+```
+
+例子二：
+```javascript
+const fs = require('fs');
+const content = 'hello world';
+const filepath = './sample.txt';
+
+const writeStream = fs.createWriteStream(filepath);
+writeStream.write(content)
+writeStream.end()
+```
+
+
+### Duplex Stream
+最常见的 Duplex Stream 是 `net.Socket` 实例。 下面例子是 服务端和客户端通过 socket 通信
+
+服务端代码：
+```javascript
+const net = require('net');
+const opt = {
+  host: '127.0.0.1',
+  port: '3000'
+};
+
+const server = net.createServer((socket) => {
+  socket.on('data', (data) => {
+     console.log('client send message: ', data.toString());
+  });
+
+  socket.write('hello client');
+});
+
+server.listen(opt.port, opt.host, () => {
+  console.log(server.address())
+});
+```
+
+客户端代码：
+```javascript
+const net = require('net');
+const opt = {
+  host: '127.0.0.1',
+  port: '3000'
+};
+
+const client = net.connect(opt, () => {
+  client.write('msg from client');
+})
+
+client.on('data', (data) => {
+  console.log('client: got reply from server [%s]', data);
+  client.end();
+});
+```
+
+### Transform Stream
+Transform Stream 是 Duplex stream 的特例， Transform Stream 也同时可读可写，但是 Transform Stream 的输入和输出是存在相关性的，也就是说输出是基于输入修改的内容。
+
+最常见的 Transform Stream 包括 zlib、crypto，比如：
+
+```javascript
+const fs = require('fs');
+const zlib = require(zlib);
+const gzip = zlib.createGzip();
+
+const inFile = fs.createReadStream('./fileForCompress.txt');
+const outFile = fs.createWriteStream('./fileForCompress.txt.gz');
+
+inFile.pipe(gzip).pipe(out)
+```
+
+
+参考：
+
+- [nodejs-learning-guide/模块/stream.md](https://github.com/chyingp/nodejs-learning-guide/blob/master/%E6%A8%A1%E5%9D%97/stream.md)
