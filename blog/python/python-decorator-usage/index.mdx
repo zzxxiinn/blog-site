@@ -1,0 +1,149 @@
+---
+title: "python-decorator-usage"
+date: "2022-11-14"
+tags: ["python"]
+---
+
+## 装饰器
+
+如果想让函数执行前，做一些额外的操作处理（比如日志，计时等），可以给函数添加一个装饰器（或者叫包装器）
+
+### 使用装饰器
+
+比如，如果想要知道一个函数执行的时间，我们可以定义一个这样的方法：
+
+```python
+import time
+from functools import wraps
+
+def timethis(func):
+    """
+    Decorator that reports the execution time.
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(func.__name__, end - start)
+        return result
+
+  return wrapper
+
+# 使用它
+@timethis
+def countdown(n):
+    """
+    Counts Down
+    """
+    while n > 0:
+        n -= 1
+
+countdown(100000)
+# countdown 0.003191232681274414
+
+
+countdown(10000000)
+# countdown 0.3045165538787842
+```
+
+一个装饰器就是一个函数，像 `@timethis` 这样的使用方法是一种语法糖，其实等价于
+
+```python
+def countdown(n):
+    ...
+countdown = timethis(countdown)
+```
+
+像很多内置方法，比如 `@staticmethod`、`@classmethod`、`@property` 原理也是这样，所以像下面两种方法是等价的：
+
+```python
+class A:
+    @classmethod
+    def method(cls):
+        ...
+
+
+class B:
+    def method(cls):
+        ...
+
+    method = classmethod(method)
+```
+
+### 传递参数
+
+举一个记录日志的例子：
+
+```python
+from functools import wraps
+import logging
+
+def logged(level, name=None, message=None):
+    def decorate(func):
+        logname = name if name else func.__module__
+        log = logging.getLogger(logname)
+        logmsg = message if message else func.__name__
+
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            log.log(level, logmsg)
+            return func(*args, **kwargs)
+        return wrapper
+    return decorate
+
+# Example use
+@logged(logging.DEBUG)
+def add(x, y):
+    return x + y
+
+@logged(logging.CRITICAL, 'example')
+def spam():
+    print('Spam!')
+```
+
+可以看出来，使用带参数的装饰器，定义起来需要稍微麻烦一些，多写一层函数来接受参数。
+
+有参数的装饰器等同于：
+
+```python
+@decorator(x, y, z)
+def func(a, b):
+    ...
+
+
+# 等同于
+def func(a, b):
+    ...
+func = decorator(x, y, z)(func)
+```
+
+## 在类中使用装饰器
+
+### 使用装饰器装饰同一个类的方法
+
+如果在类中使用同一个类下的方法作为装饰器，需要将 `self` 传递进去：
+
+```python
+
+class A:
+    def d(func):
+        def wrapper(self, *args, **kwargs):
+
+            age = kwargs.get('age')
+            if age > 18:
+                print('adult, skip')
+            else:
+                return func(self, *args, **kwargs)
+        return wrapper
+
+    @d
+    def t(self, name, age):
+        print(name, age)
+
+
+a = A()
+a.t(name='zx', age=29)
+
+# output: adult, skip
+```
