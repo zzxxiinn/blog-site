@@ -1,0 +1,145 @@
+---
+title: "overload_with_typescript"
+date: "2022-11-24"
+tags: ["typescript"]
+---
+
+**这种方法名相同，但各自的参数不同，称为方法重载。**
+
+JavaScript 本身是个动态语言，JavaScript 里面函数根据传入不同的参数而返回不同类型的数据是很常见的。
+
+```typescript
+let suits = ["hearts", "spades", "clubs", "diamonds"];
+
+function pickCard(x): any {
+  if (typeof x == "object") {
+    let pickedCard = Math.floor(Math.random() * x.length);
+    return pickedCard;
+  }
+  else if (typeof x == "number") {
+    let pickedSuit = Math.floor(x / 13);
+    return {
+      suit: suits[pickedSuit, card: x % 13];
+    }
+  }
+}
+
+let myDeck = [
+  { suit: "diamonds", card: 2 },
+  { suit: "spades", card: 10 },
+  { suit: "hearts", card: 4 },
+]
+
+let pickedCard1 = myDeck[pickCard(myDeck)];
+alert("card: " + pickedCard1.card + " of " + pickedCard1.suit);
+
+let pickedCard2 = pickCard(15);
+alert("card: " + pickedCard2.card + " of " + pickedCard2.suit);
+```
+
+`pickCard` 方法更具传入参数的不同会返回两种不同的结果：
+
+- `if (typeof x == "object")`
+- `else if (typeof x == "number")`
+
+如果传入的是代表纸牌的对象，函数作用是抓一张牌。
+
+如果用户想抓牌，我们告诉他抓到了什么牌。 但是这怎么在类型系统里表示呢。
+
+```typescript
+
+let suits = ["hearts", "spades", "clubs", "diamonds"];
+
+function pickCard(x: { suit: string; card: number; }[]): number;
+function pickCard(x: number): {suit: string; card: number; };
+function pickCard(x): any {
+  if (typeof x == "object") {
+    let pickedCard = Math.floor(Math.random() * x.length);
+    return pickedCard;
+  }
+  else if (typeof x == "number") {
+    let pickedSuit = Math.floor(x / 13);
+    return {
+      suit: suits[pickedSuit, card: x % 13];
+    }
+  }
+}
+
+let myDeck = [
+  { suit: "diamonds", card: 2 },
+  { suit: "spades", card: 10 },
+  { suit: "hearts", card: 4 },
+]
+
+let pickedCard1 = myDeck[pickCard(myDeck)];
+alert("card: " + pickedCard1.card + " of " + pickedCard1.suit);
+
+let pickedCard2 = pickCard(15);
+alert("card: " + pickedCard2.card + " of " + pickedCard2.suit);
+
+```
+
+重载的 `pickCard` 函数在调用的时候会进行正确的类型检查。
+
+为了让编译器能够选择正确的检查类型，它与 JavaScript 里的处理流程相似。 它查找重载列表，尝试使用第一个重载定义。 如果匹配的话就使用这个。 因此，在定义重载的时候，一定要把最精确的定义放在最前面。
+
+**注意**: `function pickCard(x): any` 并不是重载列表的一部分，因此这里只有两个重载：一个是接收对象另一个接收数字。 以其它参数调用 pickCard 会产生错误。
+
+上面是参数类型不同的例子，如果参数数量也不同的话：
+
+```typescript
+function padding(a: number, b?: number, c?: number, d?: number) {
+  if (b === undefined && c === undefined && d === undefined) {
+    b = c = d = a;
+  } else if (c === undefined && d === undefined) {
+    c = a;
+    d = b;
+  }
+
+  return {
+    top: a,
+    right: b,
+    bottom: c,
+    left: d,
+  };
+}
+```
+
+上面代码，a, b, c, d 的含义会根据传入的参数数量而变化，此外，该函数只需要 1、2、4 个参数。 可以使用函数重载来强制执行，和提示这些约束。
+
+```typescript
+function padding(all: number);
+function padding(topNBottom: number, leftNRight: number);
+function padding(top: number, righ);
+// 实际是现实函数体需要处理的所有情况的真实表示
+function padding(a: number, b?: number, c?: number, d?: number) {
+  if (b === undefined && c === undefined && d === undefined) {
+    b = c = d = a;
+  } else if (c === undefined && d === undefined) {
+    c = a;
+    d = b;
+  }
+
+  return {
+    top: a,
+    right: b,
+    bottom: c,
+    left: d,
+  };
+}
+```
+
+执行情况如下：
+
+```typescript
+padding(1); // Okay: all
+padding(1, 1); // Okay: topAndBottom, leftAndRight
+padding(1, 1, 1, 1); // Okay: top, right, bottom, left
+
+padding(1, 1, 1); // Error: Not a part of the available overloads
+```
+
+## 参考
+
+- [Typescript 函数](http://www.patrickzhong.com/TypeScript/zh/handbook/functions.html#%E9%87%8D%E8%BD%BD)
+- [Functions](https://basarat.gitbook.io/typescript/type-system/functions#overloading)
