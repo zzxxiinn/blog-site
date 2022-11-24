@@ -1,0 +1,53 @@
+---
+title: "使用python imaplib库连接163邮箱服务器报错"
+date: "2022-11-24"
+tags: ["python"]
+---
+
+## 这篇文章讲什么？
+
+python 中使用 imaplib 报错 `Unsafe Login. Please contact kefu@188.com for help`。
+
+## 正文
+
+项目中使用如下配置（参考 imaplib 标准库）:
+
+```python
+import imaplib
+
+client = imaplib.IMAP4_SSL(host="imap.163.com", port=993)
+client.login("username", "password")
+client.select()
+```
+
+会返回 `('NO', [b'SELECT Unsafe Login. Please contact kefu@188.com for help'])` 错误。
+
+**网易邮箱服务器会检查 IMAP 客户端有没有发送 ID 命令来表名自己的身份，如果没有，则拒绝访问。**
+
+**关于 ID 命令**:
+ID 命令的设计初衷是为了让服务器可以统计不同客户端的使用情况，但并非强制的。
+
+协议中明确表示，服务器不得以 ID 命令内的信息而对客户端拒绝提供服务。
+
+详细内容可参见 RFC2971 的定义：https://datatracker.ietf.org/doc/html/rfc2971。
+
+解决办法是：
+
+```python
+import imaplib
+imaplib.Commands['ID'] = ('NONAUTH') # 1. 加一句这个
+client = imaplib.IMAP4_SSL(host="imap.163.com", port=993) client.login("username", "password")
+client._simple_command("ID",'("name" "test" "version" "0.0.1")')  # 2. 加一句这个
+client.select()
+```
+
+## 一些名词解释
+
+- POP3 可以认为是只读的协议，客户端内的操作不会影响到服务端，只用来下载邮件。
+- IMAP 是双向的协议，客户端的操作会反馈到服务端上，服务端也同步进行操作，不仅可以下载邮件，还可以删除，移动邮件，但不能发送邮件。
+- SMTP 是用来发送邮件的。
+
+## 参考
+
+- [Python 使用 imaplib imapclient 连接网易邮箱提示 Unsafe Login. ](https://blog.csdn.net/jony_online/article/details/108638571)
+- [Python 连接 Gmail 例子](https://gist.github.com/magicshui/3788005)
