@@ -1,0 +1,34 @@
+---
+title: "使用 subprocess.Popen"
+date: "2022-12-06"
+tags: ["python"]
+---
+
+Popen 是 subprocess 的核心方法，子进程的创建和管理都靠它处理
+
+```python
+class subprocess.Popen(args, bufsize=- 1, executable=None,
+    stdin=None, stdout=None, stderr=None,
+    preexec_fn=None, close_fds=True,
+    shell=False, cwd=None, env=None, universal_newlines=None,
+    startupinfo=None, creationflags=0, restore_signals=True,
+    start_new_session=False, pass_fds=(), *, group=None,
+    extra_groups=None, user=None, umask=- 1, encoding=None,
+    errors=None, text=None, pipesize=- 1, process_group=None)
+    ...
+```
+
+**常用参数：**
+- **args**： shell 中执行的命令，可以是字符串或者序列类型（list、tuple）
+- **bufsize**: 缓冲区大小，默认 -1。
+    - 0：表示不使用缓存区
+    - 1：表示行缓存
+    - 正数：缓存区大小
+    - 负数：使用系统默认的缓存区大小
+- **stdin**, **stdout**, **stderr**：分别表示程序的标准输入、输出、错误句柄
+- **preexec_fn**：只在 Unix 平台下有效，用于指定一个可执行对象（callable object），它将在子进程运行之前被调用
+- **shell**：如果该参数为 True，将通过操作系统的 shell 执行指定的命令。
+    - 在 POSIX 系统中，当 shell=True，shell 默认为 /bin/sh。如果 args 是一个字符串，此字符串指定将通过 shell 执行的命令。这意味着字符串的格式必须和在命令提示符中所输入的完全相同。
+    - 在 Windows 中，使用 shell=True，环境变量 COMSPEC 指定了默认 shell。在 Windows 你唯一需要指定 shell=True 的情况是你想要执行内置在 shell 中的命令（例如 dir 或者 copy）。在运行一个批处理文件或者基于控制台的可执行文件时，不需要 shell=True。
+- **cwd**：用于设置子进程的当前目录。
+- **env**：用于指定子进程的环境变量。如果 env = None，子进程的环境变量将从父进程中继承。
