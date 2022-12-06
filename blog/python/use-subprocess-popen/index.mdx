@@ -4,6 +4,7 @@ date: "2022-12-06"
 tags: ["python"]
 ---
 
+## subprocess.Popen()
 Popen 是 subprocess 的核心方法，子进程的创建和管理都靠它处理
 
 ```python
@@ -19,6 +20,7 @@ class subprocess.Popen(args, bufsize=- 1, executable=None,
 ```
 
 **常用参数：**
+
 - **args**： shell 中执行的命令，可以是字符串或者序列类型（list、tuple）
 - **bufsize**: 缓冲区大小，默认 -1。
     - 0：表示不使用缓存区
@@ -32,3 +34,29 @@ class subprocess.Popen(args, bufsize=- 1, executable=None,
     - 在 Windows 中，使用 shell=True，环境变量 COMSPEC 指定了默认 shell。在 Windows 你唯一需要指定 shell=True 的情况是你想要执行内置在 shell 中的命令（例如 dir 或者 copy）。在运行一个批处理文件或者基于控制台的可执行文件时，不需要 shell=True。
 - **cwd**：用于设置子进程的当前目录。
 - **env**：用于指定子进程的环境变量。如果 env = None，子进程的环境变量将从父进程中继承。
+
+> 同 Linux 中创建子进程类似，父进程创建完子进程之后，并不会自动等待子进程执行，父进程在子进程之前退出将导致子进程成为孤儿进程，孤儿进程统一由 init 进程接管，负责其终止后的回收工作。
+> 如果父进程在子进程之后终止，并且父进程没有处理子进程最后的回收工作，子进程残留的数据结构称为**僵尸进程**。
+
+
+大量的僵尸进程将消耗系统资源，因此必须及时等待和回收子进程，或者能够确认自己比子进程先终止，从而将回收工作过渡给 init 进程。
+这个等待和回收子进程的操作就是wait()函数:
+
+```python
+import subprocess
+
+p = subprocess.Popen('ls -l', shell=True)
+
+print(p.returncode) # 0
+p.wait()
+```
+
+## Popen 对象
+
+**Popen 方法**
+- `p.poll()` 检查子进程  p 是否已经终止，返回 p.returncode 属性
+- `p.wait()` 
+- `p.communicate(input=None)`
+- `p.send_signal(signal)`
+- `p.teminate()`
+- `p.kill()`
