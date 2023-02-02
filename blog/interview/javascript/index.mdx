@@ -1,23 +1,22 @@
 ---
-title: "javascript"
-date: "2023-01-31"
+title: "面试复习题 - JavaScript"
+date: "2022-12-24"
 tags: ["interview"]
 ---
 
-## 这篇文章讲什么？
+## Cookie\sessionStorage\localStorage 的区别
 
-## 我为什么写这篇文章？
+**同**：
+- 存储在客户端
 
-## 这篇文章对谁有用？
-
-## 有什么用？
-
-## 正文
-
-## 一些名词解释
-
-## 步骤概览
-
-## 具体步骤
-
-## 问题： xxxx?
+**异**：
+- **数据大小**：
+    - Cookie 大小限制在 <mark>4Kb</mark>；
+    - localStorage\sessionStorage 存储限制可以达到 <mark>5Mb</mark>。
+- **过期时间**：
+    - Cookie 在设置的过期时间之前一直有效；
+    - localStorage 永久存储，关闭浏览器数据不会丢失除非主动删除数据；
+    - sessionStorage 数据在当前浏览器窗口关闭后自动删除。
+- **存储位置**：
+    - Cookie 会存储在本地，但也会自动传递到服务器；
+    - sessionStorage 和 localStorage 只会本地存储。
