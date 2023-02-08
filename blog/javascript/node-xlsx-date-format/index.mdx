@@ -19,11 +19,10 @@ import { getImage, GatsbyImage } from 'gatsby-plugin-image';
 
 这是因为日期格式数据在 excel 中如果转换为文本格式就会变成这串数字。
 <br />
-<br />
-<br />
 这个问题在文档中有如下的解决方案： [issue](https://github.com/mgcrea/node-xlsx/issues/17)
 
 使用 Date 包装一下这串数字，起始时间为 1900 年:
 ```javascript
-var date = new Date(1900, 0, YourDateHere - 1);
+var date = new Date(1900, 0, 42626.7875 - 1);
+console.log(date) // Tue Sep 13 2016 00:00:00 GMT+0800 (中国标准时间)
 ```
