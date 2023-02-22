@@ -1,0 +1,88 @@
+---
+title: "typescript-with-request-api"
+date: "2023-02-22"
+tags: ["typescript"]
+---
+
+使用泛型封装请求接口，从而满足不同接口调用返回不同类型的数据值。
+
+基础请求方法定义：
+```typescript
+interface RequestOptions {}
+interface RequestResponse<T> {
+    // ...
+    data: T
+}
+
+const request = <T>(options: RequestOptions): Promise<RequestResponse<T>> => {
+    return new Promise(resolve => {
+        // result = xxx
+        // resolve(result)
+    })
+}
+```
+
+具体某个接口请求明确其请求的返回类型：
+```typescript
+interface UserInfo {}
+const getUserInfo = async (): Promise<UserInfo> => {
+    const {data} = await request<UserInfo>({...})
+    // data -> UserInfo
+    return data
+}
+
+interface UserAvatarInfo {}
+const getUserAvatart = async (): Promise<UserInfo> => {
+    const {data} = await request<UserAvatarInfo>({...})
+    // data -> UserAvatarInfo
+    return data
+}
+```
+
+例如，配合 Axios 使用：
+
+通常情况下，我们会把后端返回的数据格式单独放入一个 interface 里：
+
+```typescript
+
+export interface ResponseData<T = any> {
+    code: number,
+    result: T;
+    message?: string
+}
+```
+
+然后我们把 API 单独抽离为模块时：
+
+```typescript
+import Axios from 'axios';
+
+import type { ResponseData } from 'path/to/interface.ts';
+
+export function getUser<T>() {
+  return Axios.get<ResponseData<T>>('./somepath')
+    .then(res => res.data)
+    .catch(err => console.error(err));
+}
+```
+
+然后我们写入返回的数据类型 User：
+
+```typescript
+
+interface User {
+    name: string,
+    age: number;
+}
+
+async function test() {
+  // user 被推断出为
+  // {
+  //  code: number,
+  //  result: { name: string, age: number },
+  //  message: string
+  // }
+  const user = await getUser<User>();
+}
+```
+
