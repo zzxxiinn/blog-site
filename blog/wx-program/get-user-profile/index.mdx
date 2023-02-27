@@ -1,0 +1,101 @@
+---
+title: "微信小程序中获取用户相关的信息"
+date: "2023-02-27"
+tags: ["wx-program"]
+embeddedImagesLocal:
+  - ./wx_getPhoneNumber.jpg
+  - ./wx_getPhoneNumberArgs.png
+  - ./edit-userprofile.png
+---
+
+import { getImage, GatsbyImage } from 'gatsby-plugin-image';
+
+
+> 适配微信小程序基础库 `2.30.0` 及以上版本
+
+## 获取手机号码
+
+**小程序端：**
+
+> [小程序文档](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html) ： 需要将 button 组件 open-type 的值设置为 getPhoneNumber，当用户点击并同意之后，可以通过 bindgetphonenumber 事件回调获取到动态令牌code，然后把code传到开发者后台，并在开发者后台调用微信后台提供的 phonenumber.getPhoneNumber 接口，消费code来换取用户手机号。每个code有效期为5分钟，且只能消费一次。
+
+首先定义一个按钮，给他绑定所需要的属性及回调监听：
+
+```html
+<button open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">获取手机号</button>
+```
+
+这里可以从 `getPhoneNumber` 的回调方法的参数中获取`code`，用于通过服务端换取用户手机号。
+
+```javascript
+Page({
+    getPhoneNumber(e: TouchEvent) {
+        console.log(e.detail.code)
+        // 通过接口发送给 backend 服务器
+        // request.post({ url: 'xxx', data: { code, e.detail.code } })
+    }
+})
+```
+
+当然，通常带有 `open-type` 的按钮都需要（并且仅能够通过）用户操作触发，并且用户点击授权按钮才能触发对应事件回调：
+
+<GatsbyImage alt='get phone number' image={getImage(props.localImages[0])} title='get phone number' style={{width: '50%', margin: '0 auto', display: 'block'}}/>
+
+<br />
+
+比如上面这张图里，用户点击了 `允许` 后， `getPhoneNumber` 被触发。在事件的回调中，将 code 发送给服务端。
+
+<GatsbyImage alt='event arg' image={getImage(props.localImages[1])} title='event arg' style={{width: '50%', margin: '0 auto', display: 'block'}}/>
+
+<br />
+
+**服务端：**
+
+好了，到这里应该已经拿到小程序发送过来的 code 了，拿到 code 之后，用过 `POST` 请求:
+
+```javascript
+// egg.js
+const data = ctx.request({
+    url: `https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=${YOUR_ACCESS_TOKEN}`,
+    method: "POST",
+    data: {
+        code: YOUR_CODE
+    }
+})
+```
+
+> 注意：每个 code，从用户点击到验证完毕，最多只拥有 5 分钟的生命！
+> ACCESS_TOKEN 为调用令牌， 通用[获取令牌接口](https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/api_authorizer_token.html)获取。
+
+
+如果不出bug的话，会返回如下格式的数据：
+
+```json lines
+{
+    "errcode":0,
+    "errmsg":"ok",
+    "phone_info": {
+        "phoneNumber":"xxxxxx",         // 用户绑定的手机号（国外手机号会有区号）
+        "purePhoneNumber": "xxxxxx",    // 没有区号的手机号
+        "countryCode": 86,              // 区号
+        "watermark": {                  // 数据水印
+            "timestamp": 1637744274,    // 用户获取手机号操作的时间戳
+            "appid": "xxxx"             // 小程序appid
+        }
+    }
+}
+```
+
+最后把电话号码保存起来，到这里，获取用户电话信息从前到后就做完了。
+
+## 获取头像昵称
+
+从当前版本开始，获取用户头像及昵称的方式变得稍微复杂一点，需要用户主动键入，并且存入服务端才能做持久化，不像之前每次简单调用一下开放接口。
+
+简单的说，需要给用户一个默认的昵称和头像，然后用户自己编辑后，保存至服务器。
+
+<GatsbyImage alt='获取用户头像昵称' image={getImage(props.localImages[2])} title='获取用户头像昵称'/>
+
+> 官方提示：根据相关法律法规，为确保信息安全，由用户上传的图片、昵称等信息微信侧将进行安全检测，组件从基础库2.24.4版本起，已接入内容安全服务端接口（mediaCheckAsync、msgSecCheck），以减少内容安全风险对开发者的影响。
+
+只有通过了安全检测的名称后，才会触发元素事件。
