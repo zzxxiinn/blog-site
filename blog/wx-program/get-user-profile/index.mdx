@@ -6,6 +6,7 @@ embeddedImagesLocal:
   - ./wx_getPhoneNumber.jpg
   - ./wx_getPhoneNumberArgs.png
   - ./edit-userprofile.png
+  - ./wx_getAvatarCallback.png
 ---
 
 import { getImage, GatsbyImage } from 'gatsby-plugin-image';
@@ -99,3 +100,26 @@ const data = ctx.request({
 > 官方提示：根据相关法律法规，为确保信息安全，由用户上传的图片、昵称等信息微信侧将进行安全检测，组件从基础库2.24.4版本起，已接入内容安全服务端接口（mediaCheckAsync、msgSecCheck），以减少内容安全风险对开发者的影响。
 
 只有通过了安全检测的名称后，才会触发元素事件。
+
+其中，获取头像后，会获得一个小程序内部临时存储的地址：
+
+<GatsbyImage alt='获取用户头像回调' image={getImage(props.localImages[3])} title='获取用户头像回调'/>
+
+然后通过微信上传文件接口，保存到服务器：
+
+```javascript
+wx.uploadFile({
+  url: `${BASE_URL}/api/v1/user/update-info`,
+  header: {"x-access-token": `Bearer ${jwt_token}`},
+  filePath: path_to_your_avatar,
+  name: "avatar", // key in formdata for avatar
+  formData: {/* other formData here */},
+  success: (res: any) => {resolve(res)},
+  fail: (err) => {
+    wx.showToast({icon: "error", title: "Oops！请求失败"});
+    reject(err);
+  }
+});
+```
+
+
