@@ -1,0 +1,164 @@
+---
+title: "在微信小程序中给图片添加水印"
+date: "2023-02-28"
+tags: ["wx-program"]
+embeddedImagesLocal:
+  - ./canvas-watermark.png
+  - ./canvas-preview.png
+---
+
+import { getImage, GatsbyImage } from 'gatsby-plugin-image';
+
+## 这篇文章讲什么？
+
+在小程序中使用 canvas 展示接口返回图片，并在上面加上自定义水印。支持预览及下载（都是添加水印后的内容）。
+
+## 正文
+
+不管怎么样，我们现在获取了一张图片的 url，如果不需要加水印的话，一般使用 `image` 标签，加一些覆盖层就行，否则就必须要用到 `canvas` 组件。（前提是在用户这端做这件事儿）
+
+### 绘制 canvas
+
+首先的首先，把画布添加到元素节点中。
+
+```html
+<canvas
+  type="2d"
+  class="preview-image"
+  canvas-id="previewImage"
+  id="previewImage"
+  @tap="handlePreview"
+/>
+```
+
+我们先将图片缓存到小程序中，获取临时路径地址：
+
+```javascript
+// suppose the variable is image_url
+wx.downloadFile({
+  url: image_url,
+  fail(err) {
+    console.log(err); // oops, error shows up!
+  },
+  success(tempObj) {
+    const _tempPath = tempObj.tempFilePath;
+    console.log(_tempPath);
+  }
+})
+```
+
+然后将临时路径的图片画到 canvas 元素中。 小程序不同于原生 JavaScript，因为没有 document 对象，所以给不能通过
+
+```javascript
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+```
+
+这样的方式去获取 canvas 对象以及 ctx-2d 对象。而是通过小程序提供的方法 `createSelectorQuery` 去获取 canvas 元素以及 ctx-2d 对象：
+
+```javascript
+const getQueryFields = (id) => wx.createSelectorQuery().select(id).fields({ node: true, size: true })
+
+getQueryFields('#previewImage').exec(nodes => {
+  // Canvas 对象
+  const canvas = res[0].node;
+  const width = res[0].width;
+  const height = res[0].height;
+
+  const ctx = canvas.getContext("2d");
+
+  // 初始化画布大小
+  const dpr = wx.getWindowInfo().pixelRatio; // 获取设备的像素密度和字体缩放比
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const image = canvas.createImage();   // canvas 中创建图片对象，加载完成后添加到 canvas 画布中
+  image.onload = () => {
+    console.log("image loaded!");
+    ctx.drawImage(image, 0, 0, width, height);
+    ctx.font = "12px sans-serif";       // 从这边设置水印内容及样式
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.fillRect(0, height - 24, width, 24);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("此图片由AI自动生成", width - 120, height - 8);
+  };
+  image.onerror = (err) => { console.log("Something is wrong", err) };
+
+  image.src = _tempPath;
+})
+```
+
+到这里，就可以显示带有水印的canvas图像了。
+
+<GatsbyImage alt='canvas 绘制图像及水印' image={getImage(props.localImages[0])} title='canvas 绘制图像及水印'/>
+
+
+### 使用微信预览 canvas 图片
+
+微信提供了预览一组图片的方法，快速的达到 "gallery" 的效果： [`wx.previewImage`](https://developers.weixin.qq.com/miniprogram/dev/api/media/image/wx.previewImage.html)
+
+```javascript
+wx.previewImage({
+  urls: [],             // 需要预览的图片http链接列表
+  current: '',          // 当前显示图片的http链接
+  showmenu: false,      // 预览中不显示图片操作菜单
+  success: () => {},
+  fail: () => {},
+  complete: () => {}
+});
+```
+
+可以看出预览图片必须要获取图片的地址，不管是公网图片或者是本地缓存图片，所以接下来要做的就是将 canvas 画布的内容转成这样的一个地址。小程序里面有许多功能都比较便捷，比如这里也提供了存图的方法：[`wx.canvasToTempFilePath`](https://developers.weixin.qq.com/miniprogram/dev/api/canvas/wx.canvasToTempFilePath.html)。
+
+结合这两个方法，给 canvas 绑定一个点击事件：
+
+```javascript
+// @tap="handlePreview"
+function handlePreview() {
+  getQueryFields("#previewImage").exec((res) => {
+    const canvas = res[0].node;
+
+    wx.canvasToTempFilePath({
+      canvas,
+      success: (saved) => {
+        // 生成的图片临时文件路径
+        wx.previewImage({
+          current: saved.tempFilePath, // 当前显示图片的http链接
+          urls: [saved.tempFilePath], // 需要预览的图片http链接列表
+          showmenu: false, // 预览中不显示图片操作菜单
+        });
+      },
+    });
+  });
+}
+```
+
+<GatsbyImage alt='canvas 图像预览' image={getImage(props.localImages[1])} title='canvas 图像预览'/>
+
+
+### 将 canvas 图画下载保存到本地相册
+
+如果在预览中，设置 `showmenu` 为 true，可以在预览中长按图片保存到本地。
+
+如果因为某种原因，不能这么做，一定要放一个下载按钮的话，它绑定的事件可以这么写：
+
+```javascript
+getQueryFields("#previewImage").exec((res) => {
+  const canvas = res[0].node;
+
+  wx.canvasToTempFilePath({
+    canvas,
+    success: (saved) => {
+      wx.saveImageToPhotosAlbum({
+        filePath: saved.tempFilePath
+      });
+    }
+  });
+});
+```
+
+## 参考
+
+- [`wx.previewImage`](https://developers.weixin.qq.com/miniprogram/dev/api/media/image/wx.previewImage.html)
+- [`wx.canvasToTempFilePath`](https://developers.weixin.qq.com/miniprogram/dev/api/canvas/wx.canvasToTempFilePath.html)

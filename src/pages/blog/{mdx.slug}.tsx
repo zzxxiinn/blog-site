@@ -30,7 +30,7 @@ const components = {
 
 const BlogPost = ({ data: { mdx: { frontmatter, body } } }: BlogPostProps) => {
   const image = getImage(frontmatter.hero_image)
-
+  console.log(frontmatter.embeddedImagesLocal)
   return (
     <Layout pageTitle={frontmatter.title}>
       <p>Post: {frontmatter.date}</p>

@@ -11,10 +11,14 @@ embeddedImagesLocal:
 
 import { getImage, GatsbyImage } from 'gatsby-plugin-image';
 
+
+## 这篇文章讲什么？
 > 本文介绍小程序开发中 `手机号` 及 `用户头像昵称信息` 获取方式
 > 适配微信小程序基础库 `2.30.0` 及以上版本
 
-## 获取手机号码
+## 正文
+
+### 获取手机号码
 
 **小程序端：**
 
@@ -89,7 +93,7 @@ const data = ctx.request({
 
 最后把电话号码保存起来，到这里，获取用户电话信息从前到后就做完了。
 
-## 获取头像昵称
+### 获取头像昵称
 
 从当前版本开始，获取用户头像及昵称的方式变得稍微复杂一点，需要用户主动键入，并且存入服务端才能做持久化，不像之前每次简单调用一下开放接口。
 
@@ -122,4 +126,8 @@ wx.uploadFile({
 });
 ```
 
+## 参考
 
+- [小程序文档](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html)
+- [获取手机号](https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/user-info/phone-number/getPhoneNumber.html)
+- [获取令牌接口](https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/api_authorizer_token.html)
