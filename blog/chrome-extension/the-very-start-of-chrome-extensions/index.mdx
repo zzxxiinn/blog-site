@@ -1,0 +1,45 @@
+---
+title: "从简单的例子入门Chrome扩展程序！"
+date: "2023-03-07"
+tags: ["chrome-extension", "learning"]
+embeddedImagesLocal:
+  - ./docker_intro.png
+  - ./hello-extensions.png
+  - ./hello-exteions-inspect.png
+---
+
+import { getImage, GatsbyImage } from 'gatsby-plugin-image';
+
+最近准备写一个 Chrome 浏览器插件，写一篇博客，记录一下学习过程。
+
+我们先从官方的 [Demo 仓库](https://github.com/GoogleChrome/chrome-extensions-samples) 克隆到本地。
+
+这个项目分为几个文件夹：
+
+- `api-samples/`目录下是基于 **单个** API功能的扩展案例
+- `functional-samples/`目录下是组合多个 API 功能的扩展案例
+- `_archive/apps/` 目录下是 已弃用的 Chrome 应用程序平台
+- `_archive/mv2/` 目录下是版本2的旧资源
+
+其中 `_archive` 下可能之后就会不维护或者不支持，本着学新不学旧的原则，我们直接开始学习 mv3 版本。
+
+## Hello Extensions
+
+作为最开始的入门菜，我们目标是把这个 Hello Extension 包加载到 chrome 浏览器中。
+
+- 首先，浏览器中开一个新标签访问 `chrome://extensions`
+    - 当然也可以通过点击菜单栏中的**拼图**按钮，然后选择管理扩展程序到这个页面
+    - 或者点击 **Chrome 菜单**，点击 **更多工具**，选择 **扩展程序**
+- 选择右上角的开发者工具，切换至启用
+- 选择 **加载已解压的扩展程序** 选择刚才下载好的代码仓库中 `/functional-samples/tutorial.hello-world` 文件夹，然后导入。
+
+<GatsbyImage alt='import_local_package' image={getImage(props.localImages[0])} title='import_local_package'/>
+
+Ok!到这里，就可以再拼图按钮中找到这个程序了，点击后 Hi 就可以看到简单的程序界面了。
+
+<GatsbyImage alt='hello-extensions' image={getImage(props.localImages[1])} title='hello-extensions'/>
+
+然后右键弹出框，选择**检查**，可以查看这个程序的控制台界面。
+
+<GatsbyImage alt='hello-extensions-inspect' image={getImage(props.localImages[2])} title='hello-extensions-inspect'/>
+
