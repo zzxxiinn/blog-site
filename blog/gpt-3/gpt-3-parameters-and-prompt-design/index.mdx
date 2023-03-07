@@ -5,7 +5,8 @@ tags: ["gpt-3"]
 ---
 
 
-## 使用前提，解释一下常用参数
+
+## 解释一下常用参数
 
 例子：
 
@@ -23,6 +24,8 @@ curl https://api.openai.com/v1/completions \
  "presence_penalty": 0
 }'
 ```
+
+
 
 openai.Completion 提供 4中 model:
 
@@ -84,7 +87,7 @@ prompt 可以是一个问题、一段文字描述、一段对话或任何形式�
 
 ## 尝试在不同语境下使用
 
-> 不同语境即配置不同 prompt
+> 不同语境即配置不同 prompt，抛砖英语
 
 
 ### 1. 语法纠正，”ChatGPT 教你学英语”系列
@@ -144,8 +147,14 @@ presence-penalty: 0.0
 
 - 担任面试官
 - 旅游指南
-- 。。。
+- ...
 
+根据不同的 prompt， gpt也会产出相类似的答案，网上也有很多总结 prompt 的网站，比如：
+
+- [ChatGPT 中文调教指南](https://chatguide.plexpt.com/)
+- [unlocking-the-power-of-llms](https://github.com/howl-anderson/unlocking-the-power-of-llms)
+
+gpt 的世界刚刚打开一条门缝，之后的世界会更丰满！
 
 ## 参考
 
