@@ -1,0 +1,37 @@
+---
+title: "在React中渲染原生HTML内容"
+date: "2023-03-09"
+tags: ["react"]
+---
+
+某些场景像，会需要在 `React` 组件中，直接插入 `html` 字符串节点内容，或者 `document.createElement()` 生成的元素节点。
+
+对于插入 `html` 内容，可以通过 javascript 方法，直接写入内容：
+
+```javascript
+const [htmlStr, setHtmlStr] = useState("<h1>Hello world!</h1>")
+const setElement = () => {
+    document.getElementById("box").innerHTML = htmlStr
+}
+```
+
+或者通过设置 `dangerouslySetInnerHTML` 属性将原生 HTML 内容渲染到组件中：
+
+> 但是要注意的是，这种方法可能存在安全风险，因为它能够将任意的 HTML 代码渲染到页面上，包括恶意代码。
+
+下面是一个示例代码:
+
+```javascript
+
+import React from 'react';
+
+class MyComponent extends React.Component {
+    render () {
+        const myHtml = '<div><h1>Hello, World!</h1></div>';
+        return <div dangerouslySetInnerHTML={{__html: myHtml}} />;
+    }
+}
+
+```
+
+上面的示例中，我们定义了一个包含HTML代码的字符串 `myHtml`，传递给 `__html` 键， 然后将其作为 `dangerouslySetInnerHTML` 属性的值传递给一个 `div` 元素。
