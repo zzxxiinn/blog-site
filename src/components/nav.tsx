@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Link, useStaticQuery, graphql } from 'gatsby';
+import { Link } from 'gatsby';
 import styled from 'styled-components';
 
 
@@ -12,6 +12,7 @@ interface RouteMap {
 const BaseRouteMaps: RouteMap[] = [
   { name: 'Home', route: '/' },
   { name: 'Blog', route: '/blog' },
+  { name: 'Terminal', route: '/terminal' }
 ]
 
 const Ul = styled.ul`
