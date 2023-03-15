@@ -1,0 +1,59 @@
+$console-bg: #031e11;
+$lighten-console-bg: lighten($console-bg, 20%);
+
+
+:root {
+  --console-color: #14fdce;
+  --console-bg: #{$console-bg};
+  --body-bg:  #383838;
+  --base-font-size: 12px;
+  --font-stack: VT323, georgia, serif;
+  --lighten-console-bg: #{$lighten-console-bg};
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--body-bg);
+  color: var(--console-color);
+  font-family: var(--font-stack);
+  font-size: var(--base-font-size);
+  -webkit-font-smoothing: none;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+p {
+  margin-bottom: 2rem;
+}
+
+a, a:visited {
+  border-bottom: 0.2rem solid var(--console-color);
+  color: var(--console-color);
+  text-decoration: none;
+}
+
+a:active,
+a:focus,
+a:hover {
+  background-color: var(--console-color);
+  color: var(--console-bgn);
+}
+
+::-moz-selection {
+  background-color: var(--console-color);
+  color: var(--console-bg);
+}
+
+::selection {
+  background-color: var(--console-color);
+  color: var(--console-bg);
+}

@@ -1,53 +1,40 @@
 import * as React from "react";
-import { useStaticQuery, graphql } from "gatsby";
-import styled from "styled-components";
-import Nav from "./nav";
-import { Suspense } from "react";
+import { Container, Frame, Glow, Output, Scanline } from "@components/styled";
+import { graphql, Link, useStaticQuery } from "gatsby";
+import { PropsWithChildren } from "react";
 
-const BackgroundDoodle = React.lazy(
-  () => import("../components/background-doodle")
-);
-
-export interface LayoutProps extends React.PropsWithChildren {
-  pageTitle?: string;
-  header?: boolean;
+interface PageProps extends PropsWithChildren {
+  pageTitle: string;
 }
 
-const Article = styled.article`
-  min-height: 80vh;
-  padding: 5em 0;
-`;
-
-const Layout = ({ pageTitle, children, header = true }: LayoutProps) => {
-  const data = useStaticQuery(graphql`
-    query {
-      site {
-        siteMetadata {
-          title
-        }
-      }
-    }
-  `);
-
+const IndexPage: React.FC<PageProps> = ({ pageTitle, children }) => {
   return (
-    <>
-      <Suspense fallback={<div className="doodle-background" />}>
-        <BackgroundDoodle />
-      </Suspense>
-
-      <Article>
-        <title>
-          {pageTitle} | {data.site.siteMetadata.title}
-        </title>
-
-        <main className="container">
-          {header && <Nav />}
+    <Container>
+      <Frame>
+        <Output>
           <h1>{pageTitle}</h1>
+
+          <nav>
+            <ol>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/about">About</Link>
+              </li>
+              <li>
+                <Link to="/blog">Blog</Link>
+              </li>
+            </ol>
+          </nav>
+
           {children}
-        </main>
-      </Article>
-    </>
+        </Output>
+        <Scanline />
+        <Glow />
+      </Frame>
+    </Container>
   );
 };
 
-export default Layout;
+export default IndexPage;

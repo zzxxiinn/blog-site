@@ -1,9 +1,9 @@
-import type { GatsbyConfig } from "gatsby"
+import type { GatsbyConfig } from "gatsby";
 
 const config: GatsbyConfig = {
   siteMetadata: {
-    siteUrl: `https://www.yourdomain.tld`,
-    title: "Fish Pond",
+    siteUrl: `http://zzxxiinn.cc`,
+    title: "zx`s site",
   },
   // More easily incorporate content into your pages through automatic TypeScript type generation and better GraphQL IntelliSense.
   // If you use VSCode you can also use the GraphQL plugin
@@ -13,22 +13,23 @@ const config: GatsbyConfig = {
     "gatsby-plugin-image",
     "gatsby-plugin-sharp",
     "gatsby-plugin-stylus",
+    "gatsby-plugin-sass",
     "gatsby-plugin-mdx",
     "gatsby-transformer-sharp",
     {
       resolve: "gatsby-source-filesystem",
       options: {
         name: `blog`,
-        path: `${__dirname}/blog`
-      }
+        path: `${__dirname}/blog`,
+      },
     },
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        icon: 'src/assets/images/icon.png',
-      }
+        icon: "src/assets/images/icon.png",
+      },
     },
   ],
-}
+};
 
-export default config
+export default config;
