@@ -1,0 +1,70 @@
+---
+title: "update-all-deps-with-ncu"
+date: "2023-03-16"
+tags: ["node"]
+---
+
+## tl;nr
+全局安装 `npm-check-updates` 包，一个命令更新 `package.json` 中可以更新的依赖。
+
+
+## 正文
+在维护小博客的时候，发现 `gatsby` 有大版本的更新，那本着个人用新不用旧的原则，手贱更新了，然后就发现项目跑不起来了。一堆插件需要更新，甚至 node 版本也是。
+
+让我一个一个改，那我是不愿意的，于是就搜到了 `npm-check-updates` 这个包。使用起来也很简单。
+
+
+**1. 安装**
+
+```bash
+$ npm install -g npm-check-updates
+
+#or
+
+$ npx npm-check-updates
+```
+
+
+**2. 更新 package.json 中的所有 dependencies 版本**
+
+查看哪些包会被更新
+```bash
+$ ncu
+
+Checking package.json
+[====================] 5/5 100%
+
+ eslint             7.32.0  →    8.0.0
+ prettier           ^2.7.1  →   ^3.0.0
+ svelte            ^3.48.0  →  ^3.51.0
+ typescript         >3.0.0  →   >4.0.0
+ untildify          <4.0.0  →   ^4.0.0
+ webpack               4.x  →      5.x
+
+Run ncu -u to upgrade package.json
+```
+
+更新！（这个操作会覆盖 `package.json` 文件，没提交的内容要小心点，别问我怎么知道的。。
+```bash
+$ ncu -u
+```
+
+> 如果这一步出错了，提示 `Error: ncu not found`, 需要手动将 `bin` 目录添加到 path 中
+> `export PATH="/Users/[User name]/.npm-global/bin:$PATH"`
+
+**3. 安装所有更新的包**
+```bash
+$ npm install
+```
+
+
+## post
+当然上面的方式比较暴力的，将所有依赖都按照大版本升级。如果只是更新小版本的话，`npm` 自带的命令就可以完成这个需求：
+
+```bash
+$ npm update
+```
+
+这样会按照小版本更新依赖包，并且也不会更新 `package.json`的内容。
+
+（最后总结，更新版本真是非常头疼的问题，如果不是功能上的需求的话，还是保守一些吧～当然喜欢折腾另说）

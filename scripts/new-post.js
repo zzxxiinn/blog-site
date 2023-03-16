@@ -1,5 +1,4 @@
 "use strict";
-
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs-extra");
@@ -11,12 +10,14 @@ const filenameReg = new RegExp("^[0-9a-zA-Z-_ ]+$");
 const NEW_TYPE = "+ Create new type";
 
 function getPostTypes() {
-  const types = fs.readdirSync(blogPath)
+  const types = fs
+    .readdirSync(blogPath)
     .filter(
-      p => fs.statSync(path.join(blogPath, p)).isDirectory && filenameReg.test(p)
-    )
+      (p) =>
+        fs.statSync(path.join(blogPath, p)).isDirectory && filenameReg.test(p)
+    );
 
-  return [...types, NEW_TYPE]
+  return [...types, NEW_TYPE];
 }
 
 function createPostTemplate(type, name) {
@@ -49,10 +50,10 @@ tags: ["${type}"]
 
   try {
     fs.ensureDirSync(postDirPath);
-    fs.writeFileSync(postWillCreatePath, tempString, { encoding: 'utf8' });
-    console.log(`${postWillCreatePath} created! enjoy your writing!`)
+    fs.writeFileSync(postWillCreatePath, tempString, { encoding: "utf8" });
+    console.log(`${postWillCreatePath} created! enjoy your writing!`);
   } catch (e) {
-    console.error('Something is error: ', e);
+    console.error("Something is error: ", e);
   }
 }
 
@@ -102,7 +103,7 @@ function addNewPost(type) {
         message: "Input your new post name:",
         validate(value) {
           if (fs.existsSync(path.join(blogPath, type, value))) {
-            return `Post path existing with type/name ${type}/${value}`
+            return `Post path existing with type/name ${type}/${value}`;
           }
           return (
             filenameReg.test(value) ||
@@ -112,7 +113,7 @@ function addNewPost(type) {
       },
     ])
     .then(({ name }) => {
-      createPostTemplate(type, name.replace(/\s/g, '-').toLowerCase());
+      createPostTemplate(type, name.replace(/\s/g, "-").toLowerCase());
     });
 }
 

@@ -49,7 +49,7 @@
     "eslint-plugin-react": "^7.32.2",
     "fontmin": "^0.9.9",
     "fs-extra": "^11.1.0",
-    "inquirer": "^9.1.4",
+    "inquirer": "^8.2.5",
     "prettier": "^2.8.4",
     "typescript": "^4.9.5"
   }
