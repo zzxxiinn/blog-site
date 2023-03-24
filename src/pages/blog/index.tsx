@@ -10,8 +10,10 @@ interface BlogProps {
           date: string,
           title: string
         },
+        fields: {
+          slug: string
+        }
         id: string,
-        slug: string
       }[]
     }
   }
@@ -24,7 +26,7 @@ const BlogPage = ({ data }: BlogProps) => {
         data.allMdx.nodes.map((node) => (
           <article key={node.id}>
             <h2>
-              <Link to={`/blog/${node.slug}`}>
+              <Link to={`/blog${node.fields.slug}`}>
                 {node.frontmatter.title}
               </Link>
             </h2>
@@ -45,7 +47,9 @@ export const query = graphql`
           title
         }
         id
-        slug
+        fields {
+          slug
+        }
       }
     }
   }
