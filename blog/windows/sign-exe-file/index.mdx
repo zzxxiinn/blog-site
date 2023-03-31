@@ -1,0 +1,31 @@
+---
+title: "在windows上给应用添加代码签名"
+date: "2023-03-29"
+tags: ["windows"]
+embeddedImagesLocal:
+  - ./download-visual-studio.png
+---
+
+## TL;DR
+- 【软件】通过 Visual Studio Installer 安装 **SignTool**
+- 【软件】按照系统配置下载 **SafeNet Authentication Client** 客户端 ->
+    https://knowledge.digicert.com/generalinformation/INFO1982.html
+- 【软件】下载 [DigiCertUtil.exe](https://www.digicert.com/StaticFiles/DigiCertUtil.exe) 客户端软件
+- 【准备签名硬件】将 **签名硬件（U盘）** 提前接入签名电脑
+- 【签名流程】
+    - 参考 [Code signing of Electron app for Windows](https://dev.to/janosvajda/code-signing-of-electron-js-app-for-windows-5i4) 通过 **SafeNet Authentication Client 和 DigiCertUtil.exe** 导出硬件中的证书文件到本地，并使用 openssl 转换为 pfx 文件
+    - 在命令行中通过 **SignTool** 签名 软件：
+        ```bash
+        SignTool sign /f path\to\your-sign-key-file.pfx /p YourPassword /t http://timestamp.globalsign.com/scripts/timstamp.dll path\to\file
+        ```
+
+## 1. 安装 SignTool
+[下载 Visual Studio Tools](https://visualstudio.microsoft.com/zh-hans/downloads/)，安装 **SignTool**。
+
+- 通过上面网址下载 **Visual Studio Installer**
+- 点击进入修改
+
+<GatsbyImage image={getImage(props.localImages[0])} />
+
+
+
